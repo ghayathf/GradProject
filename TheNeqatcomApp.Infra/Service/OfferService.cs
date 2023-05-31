@@ -1,10 +1,11 @@
-﻿using Neqatcom.Core.Data;
-using Neqatcom.Core.DTO;
-using Neqatcom.Core.Repository;
-using Neqatcom.Core.Service;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TheNeqatcomApp.Core.Data;
+using TheNeqatcomApp.Core.DTO;
+using TheNeqatcomApp.Core.Repository;
+using TheNeqatcomApp.Core.Service;
 
 namespace Neqatcom.Infra.Service
 {
