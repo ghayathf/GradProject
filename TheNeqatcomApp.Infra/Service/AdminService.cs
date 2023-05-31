@@ -1,54 +1,44 @@
-﻿using TheNeqatcomApp.Core.DTO;
+﻿
+using TheNeqatcomApp.Core.Data;
+using TheNeqatcomApp.Core.DTO;
+using TheNeqatcomApp.Core.Service;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TheNeqatcomApp.Core.Data;
 using TheNeqatcomApp.Core.Repository;
-using TheNeqatcomApp.Core.Service;
 
-namespace TheNeqatcomApp.Infra.Service
+namespace Neqatcom.Infra.Service
 {
-    public class AdminService : IAdminService
+   public class AdminService:IAdminService
     {
         private readonly IAdminRepository adminRepository;
         public AdminService(IAdminRepository adminRepository)
         {
             this.adminRepository = adminRepository;
         }
-
-        public List<ActorCounterDTO> ActorCounter()
-        {
-            throw new NotImplementedException();
-        }
-
-        public AdminStatisticsLoanee AdminStatisticsLoanee()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<CancleLoanAuto> CancleLoanAutomatically()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<CancleLoanMsgforLender> CancleLoanAutoMsgForLender()
-        {
-            throw new NotImplementedException();
-        }
-
-        public CategoriesStatistics categoriesStatistics()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ComplaintsStatistics complaintsStatistics()
-        {
-            throw new NotImplementedException();
-        }
-
         public void deleteComplaint(int cid)
         {
-            throw new NotImplementedException();
+            adminRepository.deleteComplaint(cid);
+        }
+        public CategoriesStatistics categoriesStatistics()
+        {
+            return adminRepository.categoriesStatistics();
+        }
+        public ComplaintsStatistics complaintsStatistics()
+        {
+            return adminRepository.complaintsStatistics();
+        }
+        public AdminStatisticsLoanee AdminStatisticsLoanee()
+        {
+            return adminRepository.AdminStatisticsLoanee();
+        }
+        public LenderAdminStatistics lenderAdminStatistics()
+        {
+            return adminRepository.lenderAdminStatistics();
+        }
+        public List<ActorCounterDTO> ActorCounter()
+        {
+            return adminRepository.ActorCounter();
         }
 
         public List<Gpcommercialregister> GetGpcommercialregisters()
@@ -58,27 +48,32 @@ namespace TheNeqatcomApp.Infra.Service
 
         public List<LenderComplaints> GetLenderStoresComplaints()
         {
-            throw new NotImplementedException();
+            return adminRepository.GetLenderStoresComplaints();
         }
 
         public void HandleRegistarction(int IDD)
         {
-            throw new NotImplementedException();
-        }
-
-        public LenderAdminStatistics lenderAdminStatistics()
-        {
-            throw new NotImplementedException();
+            adminRepository.HandleRegistarction(IDD);
         }
 
         public List<LoaneeCreditScores> loaneeCreditScores()
         {
-            throw new NotImplementedException();
+            return adminRepository.loaneeCreditScores();
         }
 
         public void ManageLenderComplaints(int loaid, int CID)
         {
-            throw new NotImplementedException();
+            adminRepository.ManageLenderComplaints(loaid, CID);
+        }
+
+        public List<CancleLoanAuto> CancleLoanAutomatically()
+        {
+            return adminRepository.CancleLoanAutomatically();
+        }
+
+        public List<CancleLoanMsgforLender> CancleLoanAutoMsgForLender()
+        {
+            return adminRepository.CancleLoanAutoMsgForLender();
         }
     }
 }
