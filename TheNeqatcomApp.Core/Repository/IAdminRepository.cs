@@ -21,5 +21,8 @@ namespace TheNeqatcomApp.Core.Repository
         CategoriesStatistics categoriesStatistics();
         List<CancleLoanAuto> CancleLoanAutomatically();
         List<CancleLoanMsgforLender> CancleLoanAutoMsgForLender();
+        void ManageComplaints(int LID, int CID);
+        List<LoaneeComplaintsDTO> GetAllCompliants();
+        void CheckFiveDays();
     }
 }

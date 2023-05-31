@@ -215,5 +215,49 @@ namespace TheNeqatcomApp.Infra.Repository
 
             dbContext.Connection.Execute(sql, parameters);
         }
+
+        public void ManageComplaints(int LID, int CID)
+        {
+            var sql = @" UPDATE GPLenderStore
+            SET warncounter = NVL(warncounter, 0) + 1,
+                ShadowStatus = CASE
+                                    WHEN NVL(warncounter, 0) + 1 <= 3 THEN ShadowStatus
+                                    ELSE 1
+                                END,
+                WarnDate = CASE
+                                WHEN NVL(warncounter, 0) + 1 <= 3 THEN WarnDate
+                                ELSE SYSDATE
+                            END
+            WHERE lenderID = @LID;
+
+            UPDATE GPComplaints
+            SET GPComplaints.managestatus = 0
+            WHERE GPComplaints.complaintsid = @CID";
+
+            var parameters = new { LID = LID, CID = CID };
+
+            dbContext.Connection.Execute(sql, parameters);
+        }
+
+        public List<LoaneeComplaintsDTO> GetAllCompliants()
+        {
+            var sql = @"SELECT GPComplaints.*,GPLoanee.loaneeid,GPLenderStore.*,GPUser.*
+FROM GPComplaints 
+LEFT JOIN GPLoanee ON GPComplaints.LOID = GPLoanee.loaneeID
+LEFT JOIN GPLenderStore ON GPComplaints.LEID = GPLenderStore.lenderID
+LEFT JOIN GPUser ON  GPLenderStore.LENDERuserID = GPUser.userID
+where GPComplaints.managestatus=1";
+
+            return dbContext.Connection.Query<LoaneeComplaintsDTO>(sql).ToList();
+        }
+
+        public void CheckFiveDays()
+        {
+            var sql = @"UPDATE GPLenderStore
+SET ShadowStatus = 0, warncounter = 0
+WHERE ShadowStatus = 1 AND warndate < SYSDATE - 5;
+";
+            dbContext.Connection.Execute(sql);
+        }
     }
 }

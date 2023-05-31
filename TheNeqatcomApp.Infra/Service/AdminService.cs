@@ -75,5 +75,20 @@ namespace Neqatcom.Infra.Service
         {
             return adminRepository.CancleLoanAutoMsgForLender();
         }
+
+        public void ManageComplaints(int LID, int CID)
+        {
+            adminRepository.ManageComplaints(LID, CID);
+        }
+
+        public List<LoaneeComplaintsDTO> GetAllCompliants()
+        {
+            return adminRepository.GetAllCompliants();
+        }
+
+        public void CheckFiveDays()
+        {
+            adminRepository.CheckFiveDays();
+        }
     }
 }
