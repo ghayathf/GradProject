@@ -21,9 +21,22 @@ namespace TheNeqatcomApp.Infra.Repository
         }
         public void CalculateCreditScores()
         {
-            throw new NotImplementedException();
-        }
+            string query = @"
+        UPDATE GPLoanee
+        SET CreditScore = (
+            CASE
+                WHEN (10 - (WarnCounter * 0.6) - (lateDaysAvg * 0.3) - (PostponeCounter * 0.1)) > 10 THEN 10
+                WHEN (10 - (WarnCounter * 0.6) - (lateDaysAvg * 0.3) - (PostponeCounter * 0.1)) < 1 THEN 1
+                ELSE ROUND(10 - (WarnCounter * 0.6) - (lateDaysAvg * 0.3) - (PostponeCounter * 0.1))
+            END
+        )
+        WHERE loaneeID IN (
+            SELECT loaneeID
+            FROM GPLoanee
+        )";
 
+            _dbContext.Connection.Execute(query);
+        }
         public void CreateHomeInformation(Gphomepage finalHomepage)
         {
             var p = new DynamicParameters();
@@ -40,7 +53,26 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<bool> CreditScoreStatus(int loaneeid)
         {
-            throw new NotImplementedException();
+            string query = @"
+        SELECT CASE
+            WHEN COUNT(*) <= 3 THEN 'TRUE'
+            ELSE 'FALSE'
+        END AS result
+        FROM gppurchasing
+        WHERE loanid IN (
+            SELECT loanid
+            FROM gploan
+            WHERE loaneeid IN (
+                SELECT loaneeid
+                FROM gploanee
+                WHERE loaneeid = :LoaneeID
+            )
+        )
+        AND (paymenttype = 1 OR paymenttype = 2)";
+
+            var parameters = new { loaneeid };
+            IEnumerable<bool> result = _dbContext.Connection.Query<bool>(query, parameters);
+            return result.ToList();
         }
 
        public void DeleteHomeInformation(int id)
@@ -83,7 +115,16 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<LoaneeReminder> GetLoaneeslatePayDaytoRemind()
         {
-            throw new NotImplementedException();
+            var query = @" SELECT gploan.*, gploanee.*, gpuser.*
+    FROM gploan
+    INNER JOIN gploanee
+      ON gploan.loaneeid = gploanee.loaneeid
+    INNER JOIN gpuser
+      ON gploanee.LOANEEUSERID = gpuser.userid
+    WHERE TRUNC(gploan.startdate) < TRUNC(SYSDATE) AND gploan.latepaystatus = 0 AND gploan.loanstatus=3";
+
+            IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);
+            return result.ToList();
         }
 
         public List<LoaneeReminder> GetLoaneestoRemind()
@@ -156,7 +197,11 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public void UpdateLatePayDateReminder()
         {
-            throw new NotImplementedException();
+            var query = @" update gploan
+ set latepaystatus=0
+    WHERE TRUNC(gploan.startdate) < TRUNC(SYSDATE)  AND gploan.latepaystatus = 1 AND gploan.loanstatus=3 AND  TRUNC(gploan.postponedate) < TRUNC(SYSDATE)";
+
+            _dbContext.Connection.Execute(query);
         }
     }
 }
