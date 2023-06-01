@@ -23,7 +23,7 @@ namespace TheNeqatcomApp.Infra.Common
             {
                 if (_Connection == null)
                 {
-                    _Connection = new SqlConnection(_configuration["ConnectionStrings:DefaultConnection"]);
+                    _Connection = new SqlConnection(_configuration["ConnectionStrings:ProdConnection"]);
                     _Connection.Open();
                 }
                 else if (_Connection.State != ConnectionState.Open)
