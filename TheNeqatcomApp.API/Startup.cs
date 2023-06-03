@@ -46,11 +46,11 @@ namespace TheNeqatcomApp.API
             services.AddCors(corsOptions =>
             {
                 corsOptions.AddPolicy("policy",
-                builder =>
-                {
-                    //builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                    builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
-                });
+               builder =>
+               { builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                   builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                  
+               });
             });
             services.AddAuthentication(opt => {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -98,6 +98,29 @@ namespace TheNeqatcomApp.API
             services.AddScoped<INotificationsRepository, NotificationsRepository>();
             services.AddHttpClient<ZoomController>();
             services.AddScoped<HttpClient>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IHomeRepository, HomeRepository>();
+            services.AddScoped<IHomeService, HomeService>();
+            services.AddScoped<IContactUsRepository, ContactUsRepository>();
+            services.AddScoped<IContactUsService, ContactUsService>();
+            services.AddScoped<ILoanRepository, LoanRepository>();
+            services.AddScoped<ILoanService, LoanService>();
+            services.AddScoped<ILoaneeRepository, LoaneeRepository>();
+            services.AddScoped<ILoaneeService, LoaneeService>();
+            services.AddScoped<IMeetingRepository, MeetingRepository>();
+            services.AddScoped<IMeetingService, MeetingService>();
+            services.AddScoped<ILenderStoreRepository, LenderStoreRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<ILenderStoreService, LenderStoreService>();
+            services.AddControllers();
+            //services.AddScoped<ILoaneeComplaintsRepository, LoaneeComplaintsRepository>();
+            //services.AddScoped<ILoaneeComplaintsService, LoaneeComplaintsService>();
+            services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddScoped<INotificationsRepository, NotificationsRepository>();
+            services.AddHttpClient<ZoomApiController>();
+            services.AddScoped<HttpClient>();
 
         }
 
@@ -117,7 +140,7 @@ namespace TheNeqatcomApp.API
 
             app.UseAuthorization();
 
-            app.UseCors("policy");
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

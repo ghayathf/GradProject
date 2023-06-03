@@ -5,6 +5,10 @@ using TheNeqatcomApp.Core.Service;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TheNeqatcomApp.Core.Data;
+using TheNeqatcomApp.Core.DTO;
+using TheNeqatcomApp.Core.Repository;
+using TheNeqatcomApp.Core.Service;
 
 namespace TheNeqatcomApp.Infra.Service
 {

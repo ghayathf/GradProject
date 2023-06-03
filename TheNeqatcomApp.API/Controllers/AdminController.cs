@@ -69,19 +69,19 @@ namespace Neqatcom.API.Controllers
         [Route("ManageLoaneeComplaints/{lid}/{CID}")]
         public void ManageLoaneeComplaints(int lid, int CID)
         {
-            lcService.ManageComplaints(lid, CID);
+            adminService.ManageComplaints(lid, CID);
         }
         [HttpGet]
         [Route("GetAllComplaints")]
         public List<LoaneeComplaintsDTO> GetAllComplaints()
         {
-            return lcService.GetAllCompliants();
+            return adminService.GetAllCompliants();
         }
         [HttpPost]
         [Route("CheckFiveDays")]
         public void CheckFiveDays()
         {
-            lcService.CheckFiveDays();
+            adminService.CheckFiveDays();
         }
         [HttpGet]
         [Route("LoaneeCreditScores")]
@@ -119,6 +119,7 @@ namespace Neqatcom.API.Controllers
         {
             return adminService.CancleLoanAutoMsgForLender();
         }
+ 
 
     }
 }
