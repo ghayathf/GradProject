@@ -100,17 +100,17 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<LoaneeReminder> GetLoaneesInPayDaytoRemind()
         {
-             var query = @"
+            var query = @"
         SELECT gploan.*, gploanee.*, gpuser.*
         FROM gploan
         INNER JOIN gploanee ON gploan.loaneeid = gploanee.loaneeid
         INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
-        WHERE TRUNC(gploan.startdate) = TRUNC(SYSDATE)
+        WHERE CAST(gploan.startdate AS DATE) = CAST(GETDATE() AS DATE)
         AND gploan.INPAYDATESTATUS = 0
         AND gploan.loanstatus = 3";
 
-    IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);
-    return result.ToList();;
+            IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);
+            return result.ToList();
         }
 
         public List<LoaneeReminder> GetLoaneeslatePayDaytoRemind()

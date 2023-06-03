@@ -3,17 +3,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Neqatcom.Infra.Repository;
+using Neqatcom.Infra.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using TheNeqatcomApp.API.Controllers;
 using TheNeqatcomApp.Core.Common;
 using TheNeqatcomApp.Core.Repository;
 using TheNeqatcomApp.Core.Service;
@@ -35,9 +39,13 @@ namespace TheNeqatcomApp.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("ProdConnection"));
+            });
             services.AddCors(corsOptions =>
             {
-                corsOptions.AddPolicy("CorsPolicy",
+                corsOptions.AddPolicy("policy",
                 builder =>
                 {
                     //builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
@@ -60,10 +68,36 @@ namespace TheNeqatcomApp.API
                     };
                 });
             services.AddControllers();
-            services.AddScoped<HttpClient>();
+            services.AddScoped<ITestimonialRepository, TestimonialRepository>();
+            services.AddScoped<ITestimonialService, TestimonialService>();
+            services.AddScoped<IOfferRepository, OfferRepository>();
+            services.AddScoped<IOfferService, OfferService>();
+            services.AddScoped<IPurchasingRepository, PurchasingRepository>();
+            services.AddScoped<IPurchasingService, PurchasingService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDBContext, DBContext>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IHomeRepository, HomeRepository>();
+            services.AddScoped<IHomeService, HomeService>();
+            services.AddScoped<IContactUsRepository, ContactUsRepository>();
+            services.AddScoped<IContactUsService, ContactUsService>();
+            services.AddScoped<ILoanRepository, LoanRepository>();
+            services.AddScoped<ILoanService, LoanService>();
+            services.AddScoped<ILoaneeRepository, LoaneeRepository>();
+            services.AddScoped<ILoaneeService, LoaneeService>();
+            services.AddScoped<IMeetingRepository, MeetingRepository>();
+            services.AddScoped<IMeetingService, MeetingService>();
+            services.AddScoped<ILenderStoreRepository, LenderStoreRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<ILenderStoreService, LenderStoreService>();
+            services.AddControllers();
+            services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddScoped<INotificationsRepository, NotificationsRepository>();
+            services.AddHttpClient<ZoomController>();
+            services.AddScoped<HttpClient>();
 
         }
 

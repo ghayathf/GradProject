@@ -21,5 +21,6 @@ namespace TheNeqatcomApp.Core.Service
         CategoriesStatistics categoriesStatistics();
         List<CancleLoanAuto> CancleLoanAutomatically();
         List<CancleLoanMsgforLender> CancleLoanAutoMsgForLender();
+
     }
 }

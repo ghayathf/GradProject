@@ -1,12 +1,12 @@
-﻿using Neqatcom.Core.Data;
-using Neqatcom.Core.DTO;
-using Neqatcom.Core.Repository;
-using Neqatcom.Core.Service;
+﻿using TheNeqatcomApp.Core.Data;
+using TheNeqatcomApp.Core.DTO;
+using TheNeqatcomApp.Core.Repository;
+using TheNeqatcomApp.Core.Service;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neqatcom.Infra.Service
+namespace TheNeqatcomApp.Infra.Service
 {
     public class OfferService : IOfferService
     {
