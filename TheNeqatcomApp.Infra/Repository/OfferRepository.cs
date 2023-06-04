@@ -20,17 +20,33 @@ namespace Neqatcom.Infra.Repository
         }
         public void CreateOffer(Gpoffer offer)
         {
-            var parameters = new
+            // Check if the category exists before inserting
+            string categoryQuery = "SELECT 1 FROM GPCategory WHERE CategoryID = @CategoryId";
+            bool categoryExists = _dbContext.Connection.ExecuteScalar<bool>(categoryQuery, new { CategoryId = offer.Categoryid });
+
+            if (categoryExists)
             {
-                months = offer.Totalmonths,
-                des = offer.Descriptions,
-                LID = offer.Lenderid,
-                CID = offer.Categoryid,
-                minmonth_ = offer.Minmonth
-            };
-            _dbContext.Connection.Execute(@"INSERT INTO GPOffer (TOTALMONTHS, DESCRIPTIONS, LENDERID, CATEGORYID, MINMONTH)
-                VALUES (@months, @des, @LID, @CID, @minmonth_)", parameters);
+                var parameters = new
+                {
+                    months = offer.Totalmonths,
+                    des = offer.Descriptions,
+                    LID = offer.Lenderid,
+                    CID = offer.Categoryid,
+                    minmonth_ = offer.Minmonth
+                };
+
+                _dbContext.Connection.Execute(
+                    @"INSERT INTO GPOffer (TOTALMONTHS, DESCRIPTIONS, LENDERID, CATEGORYID, MINMONTH)
+              VALUES (@months, @des, @LID, @CID, @minmonth_)",
+                    parameters);
+            }
+            else
+            {
+                // Handle the case where the category ID doesn't exist
+                // You can throw an exception or perform error handling accordingly
+            }
         }
+
 
         public void DeleteOffer(int id)
         {
@@ -66,7 +82,7 @@ namespace Neqatcom.Infra.Repository
         }
         public List<Gpoffer> GetAllOferById(int id)
         {
-            var sql = "SELECT * FROM GPOffer WHERE Offerid = @id";
+            var sql = "SELECT * FROM GPOffer WHERE lenderid = @id";
             var result = _dbContext.Connection.Query<Gpoffer>(sql, new { id });
             
 
