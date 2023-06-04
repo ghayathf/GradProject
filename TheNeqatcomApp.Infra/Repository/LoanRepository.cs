@@ -144,17 +144,20 @@ AND l.POSTPONESTATUS = @statuss";
 
         public void RequestNewLoan(int loaneeid, int offerid, int totalmonths)
         {
-           
             var parameters = new
             {
                 loaneeid,
                 offerid,
                 totalmonths
             };
-            var result = _dbContext.Connection.Execute("insert into gploan (LoaneeID, OfferID, TOTALMONTHS, StartDate, EndDate)" +
-                                                       "VALUES(@loaneeid, @offerid, @totalmonths, TO_DATE('2000-01-01', 'YYYY-MM-DD'), TO_DATE('2000-01-01', 'YYYY-MM-DD'))",
-                                                       parameters);
+
+            var query = @"
+        INSERT INTO gploan (LoaneeID, OfferID, TOTALMONTHS, StartDate, EndDate)
+        VALUES (@loaneeid, @offerid, @totalmonths, CONVERT(DATE, '2000-01-01', 120), CONVERT(DATE, '2000-01-01', 120))";
+
+            var result = _dbContext.Connection.Execute(query, parameters);
         }
+
 
         public void UpdateLoan(Gploan loan)
         {

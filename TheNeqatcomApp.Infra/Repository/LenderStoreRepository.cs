@@ -119,26 +119,28 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<Lengths> GetLenderCounters(int IDD)
         {
-            string query = @"SELECT 'gploan' AS TableName, COUNT(*) AS TableLength
-                     FROM gploan
-                     WHERE OfferId IN (
-                         SELECT OfferId
-                         FROM gpoffer
-                         WHERE LenderId = @IDD
-                     )
-                     UNION ALL
-                     SELECT 'gpmeetings' AS TableName, COUNT(*) AS TableLength
-                     FROM gpmeetings
-                     WHERE LenderId = @IDD
-                     UNION ALL
-                     SELECT 'gpoffer' AS TableName, COUNT(*) AS TableLength
-                     FROM gplenderstore
-                     WHERE LenderId = @IDD AND gplenderstore.registerstatus = 1";
+            string query = @"
+        SELECT 'gploan' AS TableName, COUNT(*) AS TableLength
+        FROM gploan
+        WHERE OfferId IN (
+            SELECT OfferId
+            FROM gpoffer
+            WHERE LenderId = @IDD
+        )
+        UNION ALL
+        SELECT 'gpmeetings' AS TableName, COUNT(*) AS TableLength
+        FROM gpmeetings
+        WHERE LenderId = @IDD
+        UNION ALL
+        SELECT 'gpoffer' AS TableName, COUNT(*) AS TableLength
+        FROM gpoffer
+        WHERE LenderId = @IDD";
 
             var parameters = new { IDD };
             IEnumerable<Lengths> result = _dbContext.Connection.Query<Lengths>(query, parameters);
             return result.ToList();
         }
+
 
         public LenderInfo GetLenderInfo(int id)
         {

@@ -27,7 +27,7 @@ namespace TheNeqatcomApp.API.Controllers
         [Route("GetAllMeetings")]
         public async Task<IActionResult> GetAllMeetings()
         {
-            var accessToken = "eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjdmNWViNWE1LTBjMTMtNDNmYS04OWYxLTRkNjJjYzhiOWE1NCJ9.eyJ2ZXIiOjksImF1aWQiOiJkYmRmNmRjZjM3YmQ1MTJlYjcyMTFiNTgzZGMyZWI2NiIsImNvZGUiOiJkS3dCaUdmMzY5NWl4SjV4UGgyU2pXUncySnd1aGlTbFEiLCJpc3MiOiJ6bTpjaWQ6NTRPTDZTMFJGaW9PYlF6QWw0aHJ3IiwiZ25vIjowLCJ0eXBlIjowLCJ0aWQiOjAsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6IndNVlVOWlRqVDEtV0tEcktqVGQxUkEiLCJuYmYiOjE2ODQ5MTM5NzksImV4cCI6MTY4NDkxNzU3OSwiaWF0IjoxNjg0OTEzOTc5LCJhaWQiOiJtclRBRWhVN1FSQ3lZeExiRVRRY2VBIn0._FJ37BQB4lUK6pG6-qRVeWjg6t2WBM5WQkORid7G4isI12JnQlUCIefVay6nyqTssO3xiERrvvLoUTcRb1z1nQ";
+            var accessToken = "eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjM3NjYxNTg2LTljNTEtNDJjZi1hMGI2LWU4YWRkNjY2Y2I2MiJ9.eyJ2ZXIiOjksImF1aWQiOiJkYmRmNmRjZjM3YmQ1MTJlYjcyMTFiNTgzZGMyZWI2NiIsImNvZGUiOiJLbHdYQk5ZcnhjM0kyVVdjTE5EUWRlcFBLVDhsa0RPcHciLCJpc3MiOiJ6bTpjaWQ6NTRPTDZTMFJGaW9PYlF6QWw0aHJ3IiwiZ25vIjowLCJ0eXBlIjowLCJ0aWQiOjMsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6IndNVlVOWlRqVDEtV0tEcktqVGQxUkEiLCJuYmYiOjE2ODU1ODAxMTgsImV4cCI6MTY4NTU4MzcxOCwiaWF0IjoxNjg1NTgwMTE4LCJhaWQiOiJtclRBRWhVN1FSQ3lZeEx";
             var requestUrl = "https://api.zoom.us/v2/users/me/meetings";
 
             var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
@@ -59,7 +59,7 @@ namespace TheNeqatcomApp.API.Controllers
         [Route("CreateMeeting")]
         public async Task<IActionResult> CreateMeeting([FromBody] ZoomMeeting meeting)
         {
-            var accessToken = "eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6ImExZTFiM2FkLWVmNjQtNDNiNC1iMWNkLTg5NWY4OGVhZDRkYyJ9.eyJ2ZXIiOjksImF1aWQiOiJkYmRmNmRjZjM3YmQ1MTJlYjcyMTFiNTgzZGMyZWI2NiIsImNvZGUiOiJLbHdYQk5ZcnhjM0kyVVdjTE5EUWRlcFBLVDhsa0RPcHciLCJpc3MiOiJ6bTpjaWQ6NTRPTDZTMFJGaW9PYlF6QWw0aHJ3IiwiZ25vIjowLCJ0eXBlIjowLCJ0aWQiOjEsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6IndNVlVOWlRqVDEtV0tEcktqVGQxUkEiLCJuYmYiOjE2ODQ5NDYzMjYsImV4cCI6MTY4NDk0OTkyNiwiaWF0IjoxNjg0OTQ2MzI2LCJhaWQiOiJtclRBRWhVN1FSQ3lZeExiRVRRY2VBIn0.PeQYcydsvElQn3zJL46LpXXJLXH6hsbnYMXudParKDAeNL2FzU3y5bwM_szCtq2l7MXZEMTQRe5awpv1-opWaw"; // your access token here
+            var accessToken = "eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjM3NjYxNTg2LTljNTEtNDJjZi1hMGI2LWU4YWRkNjY2Y2I2MiJ9.eyJ2ZXIiOjksImF1aWQiOiJkYmRmNmRjZjM3YmQ1MTJlYjcyMTFiNTgzZGMyZWI2NiIsImNvZGUiOiJLbHdYQk5ZcnhjM0kyVVdjTE5EUWRlcFBLVDhsa0RPcHciLCJpc3MiOiJ6bTpjaWQ6NTRPTDZTMFJGaW9PYlF6QWw0aHJ3IiwiZ25vIjowLCJ0eXBlIjowLCJ0aWQiOjMsImF1ZCI6Imh0dHBzOi8vb2F1dGguem9vbS51cyIsInVpZCI6IndNVlVOWlRqVDEtV0tEcktqVGQxUkEiLCJuYmYiOjE2ODU1ODAxMTgsImV4cCI6MTY4NTU4MzcxOCwiaWF0IjoxNjg1NTgwMTE4LCJhaWQiOiJtclRBRWhVN1FSQ3lZeEx"; // your access token here
             var requestUrl = "https://api.zoom.us/v2/users/me/meetings";
 
             var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);

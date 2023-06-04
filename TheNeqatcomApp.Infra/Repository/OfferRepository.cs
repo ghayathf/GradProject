@@ -85,7 +85,6 @@ namespace Neqatcom.Infra.Repository
             var sql = "SELECT * FROM GPOffer WHERE lenderid = @id";
             var result = _dbContext.Connection.Query<Gpoffer>(sql, new { id });
             
-
             return result.ToList();
 
         }
