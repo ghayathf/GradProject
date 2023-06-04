@@ -37,13 +37,13 @@ namespace TheNeqatcomApp.Infra.Repository
             var sql = @"
         SELECT
             (SELECT COUNT(*) FROM GPLoanee) AS loaneesCount,
-            (SELECT ROUND(AVG(CreditScore)) FROM GPLoanee) AS averageCreditScore,
-            (SELECT COUNT(*) FROM GPLoan) AS totalLoansCount
-        FROM DUAL";
+            (SELECT ROUND(AVG(CreditScore), 2) FROM GPLoanee) AS averageCreditScore,
+            (SELECT COUNT(*) FROM GPLoan) AS totalLoansCount";
 
-            IEnumerable<AdminStatisticsLoanee> loan = dbContext.Connection.Query<AdminStatisticsLoanee>(sql);
-            return loan.FirstOrDefault();
+            IEnumerable<AdminStatisticsLoanee> result = dbContext.Connection.Query<AdminStatisticsLoanee>(sql);
+            return result.FirstOrDefault();
         }
+
 
         public List<CancleLoanAuto> CancleLoanAutomatically()
         {
@@ -53,12 +53,14 @@ namespace TheNeqatcomApp.Infra.Repository
         INNER JOIN gploanee ON gploan.loaneeid = gploanee.loaneeid
         INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
         INNER JOIN gpmeetings ON gpmeetings.loanid = gploan.loanid
-        WHERE TRUNC(gpmeetings.startdate) + 3 <= TRUNC(SYSDATE)
+        WHERE DATEADD(DAY, 3, CAST(gpmeetings.startdate AS DATE)) <= CAST(GETDATE() AS DATE)
         AND (gploan.loanstatus = 1 OR gploan.loanstatus = 2)";
 
             IEnumerable<CancleLoanAuto> loan = dbContext.Connection.Query<CancleLoanAuto>(sql);
             return loan.ToList();
         }
+
+
 
         public List<CancleLoanMsgforLender> CancleLoanAutoMsgForLender()
         {
@@ -78,42 +80,34 @@ namespace TheNeqatcomApp.Infra.Repository
         public CategoriesStatistics categoriesStatistics()
         {
             var sql = @"
-        SELECT (
-            SELECT COUNT(*) FROM GPCategory
-        ) AS TotalCategories,
-        (
-            SELECT COUNT(*) FROM GPOffer
-        ) AS TotalOffers,
-        (
-            SELECT COUNT(*) FROM GPLoan
-        ) AS TotalLoans
-        FROM DUAL";
+        SELECT
+            (SELECT COUNT(*) FROM GPCategory) AS TotalCategories,
+            (SELECT COUNT(*) FROM GPOffer) AS TotalOffers,
+            (SELECT COUNT(*) FROM GPLoan) AS TotalLoans";
 
-            IEnumerable<CategoriesStatistics> loan = dbContext.Connection.Query<CategoriesStatistics>(sql);
-            return loan.FirstOrDefault();
+            IEnumerable<CategoriesStatistics> result = dbContext.Connection.Query<CategoriesStatistics>(sql);
+            return result.FirstOrDefault();
         }
+
 
         public ComplaintsStatistics complaintsStatistics()
         {
             var sql = @"
-        SELECT (
-            SELECT COUNT(*) FROM GPCOMPLAINTS WHERE manageStatus = 1
-        ) AS LoaneeToLenderCount,
-        (
-            SELECT COUNT(*) FROM GPCOMPLAINTS WHERE manageStatus = 2
-        ) AS LenderToLoaneeCount,
-        (
-            SELECT COUNT(*) FROM GPCOMPLAINTS WHERE manageStatus = 3
-        ) AS SystemToLoaneeCount
-        FROM DUAL";
+        SELECT
+            SUM(CASE WHEN manageStatus = 1 THEN 1 ELSE 0 END) AS LoaneeToLenderCount,
+            SUM(CASE WHEN manageStatus = 2 THEN 1 ELSE 0 END) AS LenderToLoaneeCount,
+            SUM(CASE WHEN manageStatus = 3 THEN 1 ELSE 0 END) AS SystemToLoaneeCount
+        FROM
+            GPCOMPLAINTS";
 
-            IEnumerable<ComplaintsStatistics> loan = dbContext.Connection.Query<ComplaintsStatistics>(sql);
-            return loan.FirstOrDefault();
+            IEnumerable<ComplaintsStatistics> result = dbContext.Connection.Query<ComplaintsStatistics>(sql);
+            return result.FirstOrDefault();
         }
+
 
         public void deleteComplaint(int cid)
         {
-            var sql = "UPDATE GPComplaints SET managestatus = -1 WHERE complaintsid = :CID";
+            var sql = "UPDATE GPComplaints SET managestatus = -1 WHERE complaintsid = @CID";
             var p = new { CID = cid };
 
             dbContext.Connection.Execute(sql, p);
@@ -155,10 +149,10 @@ namespace TheNeqatcomApp.Infra.Repository
         WHERE commercialcode = (
             SELECT commercialregister 
             FROM GPLenderstore 
-            WHERE LenderID = @IDD
+            WHERE LenderID = @LenderID
         ) AND commercialcode IS NOT NULL";
 
-            v_count = dbContext.Connection.ExecuteScalar<int>(countQuery, new { IDD });
+            v_count = dbContext.Connection.ExecuteScalar<int>(countQuery, new { LenderID = IDD });
 
             if (v_count > 0)
             {
@@ -166,11 +160,12 @@ namespace TheNeqatcomApp.Infra.Repository
                 string updateQuery = @"
             UPDATE GPLenderstore 
             SET RegisterStatus = 1 
-            WHERE LenderID = @IDD";
+            WHERE LenderID = @LenderID";
 
-                dbContext.Connection.Execute(updateQuery, new { IDD });
+                dbContext.Connection.Execute(updateQuery, new { LenderID = IDD });
             }
         }
+
 
 
 
@@ -226,7 +221,7 @@ namespace TheNeqatcomApp.Infra.Repository
                                 END,
                 WarnDate = CASE
                                 WHEN NVL(warncounter, 0) + 1 <= 3 THEN WarnDate
-                                ELSE SYSDATE
+                                ELSE GetDate()
                             END
             WHERE lenderID = @LID;
 
@@ -246,7 +241,7 @@ FROM GPComplaints
 LEFT JOIN GPLoanee ON GPComplaints.LOID = GPLoanee.loaneeID
 LEFT JOIN GPLenderStore ON GPComplaints.LEID = GPLenderStore.lenderID
 LEFT JOIN GPUser ON  GPLenderStore.LENDERuserID = GPUser.userID
-where GPComplaints.managestatus=1";
+where GPComplaints.managestatus=2";
 
             return dbContext.Connection.Query<LoaneeComplaintsDTO>(sql).ToList();
         }
@@ -255,7 +250,7 @@ where GPComplaints.managestatus=1";
         {
             var sql = @"UPDATE GPLenderStore
 SET ShadowStatus = 0, warncounter = 0
-WHERE ShadowStatus = 1 AND warndate < SYSDATE - 5;
+WHERE ShadowStatus = 1 AND warndate < GetDate() - 5;
 ";
             dbContext.Connection.Execute(sql);
         }

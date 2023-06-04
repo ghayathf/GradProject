@@ -47,9 +47,9 @@ namespace Neqatcom.Infra.Repository
                 LendId = gpcomplaint.Leid
             };
 
-
-            var result = _dbContext.Connection.Execute("INSERT INTO gpcomplaints (compliantnotes, dateofcomplaints, LOID, LEID, managestatus) VALUES(@note, GETDATE(), @LoaneID, @LendId, 1)", parameters);
+            var result = _dbContext.Connection.Execute("INSERT INTO gpcomplaints (compliantnotes, dateofcomplaints, LOID, LEID, managestatus) VALUES(@note, DATEADD(DAY, 1, GETDATE()), @LoaneID, @LendId, 1)", parameters);
         }
+
         public void DeleteLoanee(int IDD)
         {
 
@@ -58,7 +58,7 @@ namespace Neqatcom.Infra.Repository
         }
         public List<Gpnationalnumber> GetAllGpnationalnumber()
         {
-            string query = "SELECT * FROM GPUser";
+            string query = "SELECT * FROM GPNationalnumber";
             IEnumerable<Gpnationalnumber> result = _dbContext.Connection.Query<Gpnationalnumber>(query);
             return result.ToList();
         }

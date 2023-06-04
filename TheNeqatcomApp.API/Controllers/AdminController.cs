@@ -16,12 +16,10 @@ namespace Neqatcom.API.Controllers
     {
 
         private readonly IAdminService adminService;
-        private readonly ILoaneeComplaintsService lcService;
 
-        public AdminController(IAdminService adminService,ILoaneeComplaintsService lcService)
+        public AdminController(IAdminService adminService)
         {
             this.adminService = adminService;
-            this.lcService = lcService;
         }
         [HttpPut]
         [Route("deleteComplaint/{cid}")]

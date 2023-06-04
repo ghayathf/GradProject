@@ -22,21 +22,61 @@ namespace TheNeqatcomApp.Infra.Repository
         public void CalculateCreditScores()
         {
             string query = @"
-        UPDATE GPLoanee
-        SET CreditScore = (
-            CASE
-                WHEN (10 - (WarnCounter * 0.6) - (lateDaysAvg * 0.3) - (PostponeCounter * 0.1)) > 10 THEN 10
-                WHEN (10 - (WarnCounter * 0.6) - (lateDaysAvg * 0.3) - (PostponeCounter * 0.1)) < 1 THEN 1
-                ELSE ROUND(10 - (WarnCounter * 0.6) - (lateDaysAvg * 0.3) - (PostponeCounter * 0.1))
+        DECLARE @LoaneeId INT;
+        DECLARE @LateDaysSum INT;
+        DECLARE @LoanCount INT;
+        DECLARE @CreditScore DECIMAL(10, 2);
+
+        DECLARE loaneeCursor CURSOR FOR
+        SELECT LoaneeId
+        FROM GPLoanee;
+
+        OPEN loaneeCursor;
+
+        FETCH NEXT FROM loaneeCursor INTO @LoaneeId;
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            SELECT @LateDaysSum = SUM(l.LateDaysCounter), @LoanCount = COUNT(*)
+            FROM GPLoan l
+            WHERE l.LoaneeId = @LoaneeId;
+
+            IF @LoanCount > 0
+            BEGIN
+                SELECT @CreditScore = CASE
+                    WHEN (10 - (gn.WarnCounter * 0.6) - (@LateDaysSum * 0.3) - (gn.PostponeCounter * 0.1)) > 10 THEN 10
+                    WHEN (10 - (gn.WarnCounter * 0.6) - (@LateDaysSum * 0.3) - (gn.PostponeCounter * 0.1)) < 1 THEN 1
+                    ELSE ROUND(10 - (gn.WarnCounter * 0.6) - (@LateDaysSum * 0.3) - (gn.PostponeCounter * 0.1), 2)
+                END
+                FROM GPLoanee gn
+                WHERE gn.LoaneeId = @LoaneeId;
             END
-        )
-        WHERE loaneeID IN (
-            SELECT loaneeID
-            FROM GPLoanee
-        )";
+            ELSE
+            BEGIN
+                SET @CreditScore = 10; -- Set a default value or adjust as needed
+            END
+
+            UPDATE GPLoanee
+            SET CreditScore = @CreditScore
+            WHERE LoaneeId = @LoaneeId;
+
+            FETCH NEXT FROM loaneeCursor INTO @LoaneeId;
+        END
+
+        CLOSE loaneeCursor;
+        DEALLOCATE loaneeCursor;
+    ";
 
             _dbContext.Connection.Execute(query);
         }
+
+
+
+
+
+
+
+
         public void CreateHomeInformation(Gphomepage finalHomepage)
         {
             var p = new DynamicParameters();
@@ -65,7 +105,7 @@ namespace TheNeqatcomApp.Infra.Repository
             WHERE loaneeid IN (
                 SELECT loaneeid
                 FROM gploanee
-                WHERE loaneeid = :LoaneeID
+                WHERE loaneeid = @LoaneeID
             )
         )
         AND (paymenttype = 1 OR paymenttype = 2)";
@@ -115,17 +155,19 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<LoaneeReminder> GetLoaneeslatePayDaytoRemind()
         {
-            var query = @" SELECT gploan.*, gploanee.*, gpuser.*
-    FROM gploan
-    INNER JOIN gploanee
-      ON gploan.loaneeid = gploanee.loaneeid
-    INNER JOIN gpuser
-      ON gploanee.LOANEEUSERID = gpuser.userid
-    WHERE TRUNC(gploan.startdate) < TRUNC(SYSDATE) AND gploan.latepaystatus = 0 AND gploan.loanstatus=3";
+            var query = @"
+        SELECT gploan.*, gploanee.*, gpuser.*
+        FROM gploan
+        INNER JOIN gploanee ON gploan.loaneeid = gploanee.loaneeid
+        INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
+        WHERE CAST(gploan.startdate AS DATE) < CAST(GETDATE() AS DATE)
+        AND gploan.latepaystatus = 0
+        AND gploan.loanstatus = 3";
 
             IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);
             return result.ToList();
         }
+
 
         public List<LoaneeReminder> GetLoaneestoRemind()
         {
@@ -134,12 +176,13 @@ namespace TheNeqatcomApp.Infra.Repository
         FROM gploan
         INNER JOIN gploanee ON gploan.loaneeid = gploanee.loaneeid
         INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
-        WHERE TRUNC(gploan.startdate) - 3 = TRUNC(SYSDATE)  
+        WHERE DATEADD(DAY, -3, CAST(gploan.startdate AS DATE)) = CAST(GETDATE() AS DATE)
         AND gploan.beforepaystatus = 0 AND gploan.loanstatus = 3";
 
             IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);
             return result.ToList();
         }
+
 
 
         public List<Lengths> getTableLength()
@@ -160,12 +203,13 @@ namespace TheNeqatcomApp.Infra.Repository
             var query = @"
         UPDATE gploan
         SET beforepaystatus = 1
-        WHERE TRUNC(gploan.startdate) - 3 = TRUNC(SYSDATE)
+        WHERE DATEADD(DAY, -3, CAST(gploan.startdate AS DATE)) = CAST(GETDATE() AS DATE)
         AND gploan.beforepaystatus = 0
         AND gploan.loanstatus = 3";
 
             _dbContext.Connection.Execute(query);
         }
+
 
         public void UpdateHomeInformation(Gphomepage finalHomepage)
         {

@@ -71,7 +71,7 @@ namespace TheNeqatcomApp.Infra.Repository
                 IDD
             };
 
-            var result = _dbContext.Connection.Execute("DELETE FROM GPLOAN WHERE LoanID = @id", parameters);
+            var result = _dbContext.Connection.Execute("DELETE FROM GPLOAN WHERE LoanID = @IDD", parameters);
         }
 
         public int ExistingLoanCounter(int LoaneeID)
@@ -121,8 +121,8 @@ JOIN GPLenderStore ls ON o.LenderId = ls.lenderID
 JOIN GPLoanee le ON l.LoaneeId = le.loaneeID
 JOIN GPUser u ON le.loaneeuserid = u.userid
 LEFT JOIN GPMeetings m ON m.loanid = l.loanid
-WHERE ls.lenderID = LSID
-AND l.POSTPONESTATUS = statuss";
+WHERE ls.lenderID = @LSID
+AND l.POSTPONESTATUS = @statuss";
 
             var parameters = new
             {
@@ -136,7 +136,7 @@ AND l.POSTPONESTATUS = statuss";
         public Gploan GetLoanByID(int IDD)
         {
 
-            string query = "SELECT * FROM GPLOAN WHERE Lenderid = @IDD";
+            string query = "SELECT * FROM GPLOAN WHERE Loanid = @IDD";
             var parameters = new { IDD };
             Gploan result = _dbContext.Connection.QueryFirstOrDefault<Gploan>(query, parameters);
             return result;

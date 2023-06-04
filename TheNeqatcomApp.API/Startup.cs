@@ -119,7 +119,7 @@ namespace TheNeqatcomApp.API
             //services.AddScoped<ILoaneeComplaintsService, LoaneeComplaintsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
             services.AddScoped<INotificationsRepository, NotificationsRepository>();
-            services.AddHttpClient<ZoomApiController>();
+            services.AddHttpClient<ZoomController>();
             services.AddScoped<HttpClient>();
 
         }

@@ -62,28 +62,40 @@ namespace TheNeqatcomApp.Infra.Repository
         public List<LoaneesForLendercs> GetAllLoaneesForLendercs(int id)
         {
             var parameters = new { id };
-            string query = @"SELECT DISTINCT *
-                     FROM GPLOAN
-                     INNER JOIN GPOFFER ON GPLOAN.OFFERID = GPOFFER.OFFERID
-                     INNER JOIN GPLOANEE ON GPLOAN.LOANEEID = GPLOANEE.LOANEEID
-                     INNER JOIN GPUSER ON gploanee.loaneeuserid = GPUSER.USERID
-                     LEFT JOIN GPLENDERSTORE ON GPOFFER.LENDERID = GPLENDERSTORE.LENDERID
-                     WHERE GPLENDERSTORE.LENDERID = @id
-                     AND (GPLOAN.LOANID, GPUSER.USERID) IN (
-                         SELECT MIN(GPLOAN.LOANID), GPUSER.USERID
-                         FROM GPLOAN
-                         INNER JOIN GPOFFER ON GPLOAN.OFFERID = GPOFFER.OFFERID
-                         INNER JOIN GPLOANEE ON GPLOAN.LOANEEID = GPLOANEE.LOANEEID
-                         INNER JOIN GPUSER ON gploanee.loaneeuserid = GPUSER.USERID
-                         LEFT JOIN GPLENDERSTORE ON GPOFFER.LENDERID = GPLENDERSTORE.LENDERID
-                         WHERE GPLENDERSTORE.LENDERID = @id
-                         GROUP BY GPUSER.USERID
-                     )";
+            string query = @"
+        SELECT DISTINCT *
+        FROM GPLOAN
+        INNER JOIN GPOFFER ON GPLOAN.OFFERID = GPOFFER.OFFERID
+        INNER JOIN GPLOANEE ON GPLOAN.LOANEEID = GPLOANEE.LOANEEID
+        INNER JOIN GPUSER ON gploanee.loaneeuserid = GPUSER.USERID
+        LEFT JOIN GPLENDERSTORE ON GPOFFER.LENDERID = GPLENDERSTORE.LENDERID
+        WHERE GPLENDERSTORE.LENDERID = @id
+        AND GPUSER.USERID IN (
+            SELECT GPUSER.USERID
+            FROM GPLOAN
+            INNER JOIN GPOFFER ON GPLOAN.OFFERID = GPOFFER.OFFERID
+            INNER JOIN GPLOANEE ON GPLOAN.LOANEEID = GPLOANEE.LOANEEID
+            INNER JOIN GPUSER ON gploanee.loaneeuserid = GPUSER.USERID
+            LEFT JOIN GPLENDERSTORE ON GPOFFER.LENDERID = GPLENDERSTORE.LENDERID
+            WHERE GPLENDERSTORE.LENDERID = @id
+            GROUP BY GPUSER.USERID
+            HAVING MIN(GPLOAN.LOANID) = (
+                SELECT MIN(LOANID)
+                FROM GPLOAN
+                INNER JOIN GPOFFER ON GPLOAN.OFFERID = GPOFFER.OFFERID
+                INNER JOIN GPLOANEE ON GPLOAN.LOANEEID = GPLOANEE.LOANEEID
+                INNER JOIN GPUSER ON gploanee.loaneeuserid = GPUSER.USERID
+                LEFT JOIN GPLENDERSTORE ON GPOFFER.LENDERID = GPLENDERSTORE.LENDERID
+                WHERE GPLENDERSTORE.LENDERID = @id
+                GROUP BY GPUSER.USERID
+            )
+        )";
 
-            
             IEnumerable<LoaneesForLendercs> result = _dbContext.Connection.Query<LoaneesForLendercs>(query, parameters);
             return result.ToList();
         }
+
+
 
         public List<LoanOffer> GetAllLoanOffer(int lenderid, int loaneeid)
         {
@@ -130,7 +142,7 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public LenderInfo GetLenderInfo(int id)
         {
-            string query = @"SELECT GPLENDERSTORE.lenderid, GPLENDERSTORE.commercialRegister, GPLENDERSTORE.lenderuserid, GPLENDERSTORE.registerStatus, GPLENDERSTORE.ShadowStatus, GPLENDERSTORE.companySize, GPLENDERSTORE.SiteURL, GPUSER.UserID, GPUSER.FirstName, GPUSER.LastName, GPUSER.Email, GPUSER.password, GPUSER.phoneNum, GPUSER.Address, GPUSER.Role, GPUSER.userName, GPUSER.userimage, CEIL(AVG(gpmeetings.feedbackk)) AS avg_feedback
+            string query = @"SELECT GPLENDERSTORE.lenderid, GPLENDERSTORE.commercialRegister, GPLENDERSTORE.lenderuserid, GPLENDERSTORE.registerStatus, GPLENDERSTORE.ShadowStatus, GPLENDERSTORE.companySize, GPLENDERSTORE.SiteURL, GPUSER.UserID, GPUSER.FirstName, GPUSER.LastName, GPUSER.Email, GPUSER.password, GPUSER.phoneNum, GPUSER.Address, GPUSER.Role, GPUSER.userName, GPUSER.userimage, CEILING(AVG(gpmeetings.feedbackk)) AS avg_feedback
                      FROM GPLENDERSTORE
                      LEFT JOIN GPUSER ON GPLENDERSTORE.lenderuserid = GPUSER.userid
                      LEFT JOIN gpmeetings ON GPLENDERSTORE.lenderid = gpmeetings.lenderid
@@ -142,10 +154,11 @@ namespace TheNeqatcomApp.Infra.Repository
             return result;
         }
 
+
         public List<LenderPayment> GetLenderPayments(int lenderid)
         {
             string query = @"SELECT 
-                        TO_CHAR(p.paymentdate, 'Month') AS MonthName,
+                        FORMAT(p.paymentdate, 'MMMM') AS MonthName,
                         SUM(p.paymentamount) AS TotalPayments
                     FROM 
                         GPPURCHASING p
@@ -154,12 +167,13 @@ namespace TheNeqatcomApp.Infra.Repository
                     WHERE 
                         o.lenderid = @lenderid
                     GROUP BY 
-                        TO_CHAR(p.paymentdate, 'Month')";
+                        FORMAT(p.paymentdate, 'MMMM')";
 
             var parameters = new { lenderid };
             IEnumerable<LenderPayment> result = _dbContext.Connection.Query<LenderPayment>(query, parameters);
             return result.ToList();
         }
+
 
         public Gplenderstore GetLenderStoreById(int id)
         {
@@ -179,7 +193,7 @@ namespace TheNeqatcomApp.Infra.Repository
                         managestatus
                     ) VALUES (
                         @Note,
-                        SYSDATE,
+                        GetDate(),
                         @LoaneeID,
                         @LenderID,
                         2
