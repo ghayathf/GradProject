@@ -91,7 +91,7 @@ namespace Neqatcom.Infra.Repository
                     LEFT JOIN gpuser U ON U.userid = LE.lenderuserid
                     LEFT JOIN gpcategory C ON C.categoryID = O.categoryid
                     WHERE L.loaneeid = @LID
-                    AND (L.loanstatus = 3 OR L.loanstatus = 4 or L.loanstatus = 0)";
+                    AND (L.loanstatus = 3 OR L.loanstatus = 4 or L.loanstatus = 0 or L.loanstatus = 2)";
 
             var parameters = new { LID };
 
