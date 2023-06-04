@@ -111,15 +111,21 @@ namespace TheNeqatcomApp.Infra.Repository
             };
 
             string query = @"
-        SELECT *
-        FROM GPUser
-        WHERE email = @email
-        AND password = @password";
+    SELECT U.USERNAME, U.userid, U.firstname, U.lastname, U.email, U.phonenum, U.userimage, U.role,
+    CASE WHEN U.role = 'Lender' THEN L.lenderid ELSE NULL END AS lenderId,
+    CASE WHEN U.role = 'Loanee' THEN LN.loaneeid ELSE NULL END AS loaneeId
+    FROM GPUser U
+    LEFT JOIN GPlenderstore L ON U.userid = L.lenderuserid AND U.role = 'Lender'
+    LEFT JOIN GPloanee LN ON U.userid = LN.loaneeuserid AND U.role = 'Loanee'
+    WHERE U.email = @email
+    AND U.password = @password";
 
-            IEnumerable<LoginClaims> result = _dbContext.Connection.Query<LoginClaims>(query, parameters);
+            var result = _dbContext.Connection.QuerySingleOrDefault<LoginClaims>(query, parameters);
 
-            return result.FirstOrDefault();
+            return result;
         }
+
+
 
         public void updatePassword(Gpuser gpuser)
         {

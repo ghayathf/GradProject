@@ -59,11 +59,11 @@ namespace TheNeqatcomApp.Infra.Service
                 };
                 if (result.Role == "Lender")
                 {
-                    claims.Add(new Claim("Lenderid", result.lender_id.ToString()));
+                    claims.Add(new Claim("Lenderid", result.lenderId.ToString()));
                 }
                 else if (result.Role == "Loanee")
                 {
-                    claims.Add(new Claim("Loaneeid", result.loanee_id.ToString()));
+                    claims.Add(new Claim("Loaneeid", result.loaneeId.ToString()));
                 }
                 var tokenOptions = new JwtSecurityToken(
                     claims: claims,
