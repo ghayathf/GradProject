@@ -23,8 +23,8 @@ namespace TheNeqatcomApp.Infra.Repository
             {
                 CommercialRegister = gplenderstore.Commercialregister,
                 UserID = gplenderstore.Lenderuserid,
-                RegisterStatus = gplenderstore.Registerstatus,
-                ShadowStatus = gplenderstore.Shadowstatus,
+                RegisterStatus = -1,
+                ShadowStatus = 0,
                 CompanySize = gplenderstore.Companysize,
                 SiteURL = gplenderstore.Siteurl,
                 BankAccount = gplenderstore.Bankaccount

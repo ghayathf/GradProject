@@ -232,20 +232,26 @@ namespace TheNeqatcomApp.Infra.Repository
             var query = @"
         UPDATE gploan
         SET INPAYDATESTATUS = 1
-        WHERE TRUNC(gploan.startdate) = TRUNC(SYSDATE)
+        WHERE DATEPART(DAY, gploan.startdate) = DATEPART(DAY, GETDATE())
         AND gploan.INPAYDATESTATUS = 0
         AND gploan.loanstatus = 3";
 
             _dbContext.Connection.Execute(query);
         }
 
+
         public void UpdateLatePayDateReminder()
         {
-            var query = @" update gploan
- set latepaystatus=0
-    WHERE TRUNC(gploan.startdate) < TRUNC(SYSDATE)  AND gploan.latepaystatus = 1 AND gploan.loanstatus=3 AND  TRUNC(gploan.postponedate) < TRUNC(SYSDATE)";
+            var query = @"
+        UPDATE gploan
+        SET latepaystatus = 0
+        WHERE CONVERT(date, gploan.startdate) < CONVERT(date, GETDATE())
+        AND gploan.latepaystatus = 1
+        AND gploan.loanstatus = 3
+        AND CONVERT(date, gploan.postponedate) < CONVERT(date, GETDATE())";
 
             _dbContext.Connection.Execute(query);
         }
+
     }
 }

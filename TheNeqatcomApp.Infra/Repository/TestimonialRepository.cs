@@ -58,8 +58,33 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<TestimonalUser> GetTestimonialAccepted()
         {
-            throw new NotImplementedException();
+            string query = @"
+        WITH RandomizedTestimonials AS (
+            SELECT TOP 3
+                GPTestimonial.message,
+                GPTestimonial.testimonialid,
+                GPTestimonial.userid AS testimonial_userid,
+                GPTestimonial.testimonialstatus,
+                GPUSER.userid AS Userid,
+                GPUSER.firstname,
+                GPUSER.lastname,
+                GPUSER.email
+            FROM GPTestimonial
+            INNER JOIN GPUSER ON GPTestimonial.userid = GPUSER.userid
+            WHERE GPTestimonial.testimonialstatus = 1
+            ORDER BY NEWID()
+        )
+        SELECT * FROM RandomizedTestimonials";
+
+            IEnumerable<TestimonalUser> result = _dbcontext.Connection.Query<TestimonalUser>(query);
+            return result.ToList();
         }
+
+
+
+
+
+
 
         public Gptestimonial GetTestimonialById(int id)
         {
@@ -72,19 +97,24 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<TestimonalUser> GetTestimonialHome()
         {
-            string query = "SELECT * " +
-                           "FROM ( " +
-                           "  SELECT * " +
-                           "  FROM GPTestimonial " +
-                           "  INNER JOIN GPUSER ON GPTestimonial.userid = gpuser.userid " +
-                           "  WHERE GPTestimonial.testimonialstatus = 1 " +
-                           "  ORDER BY DBMS_RANDOM.VALUE " +
-                           ") " +
-                           "WHERE ROWNUM <= 3";
+            string query = "SELECT TOP 3 " +
+                           "GPTestimonial.testimonialid, GPTestimonial.userid, GPTestimonial.testimonialstatus, " +
+                           "GPUSER.userid AS gpuserid, GPUSER.username, GPUSER.email " +
+                           "INTO #RandomizedTestimonials " +
+                           "FROM GPTestimonial " +
+                           "INNER JOIN GPUSER ON GPTestimonial.userid = gpuser.userid " +
+                           "WHERE GPTestimonial.testimonialstatus = 1 " +
+                           "ORDER BY NEWID(); " +
+                           "SELECT * FROM #RandomizedTestimonials";
 
             IEnumerable<TestimonalUser> result = _dbcontext.Connection.Query<TestimonalUser>(query);
             return result.ToList();
         }
+
+
+
+
+
 
         public void UpdateTestimonial(Gptestimonial finalTestimonial)
         {

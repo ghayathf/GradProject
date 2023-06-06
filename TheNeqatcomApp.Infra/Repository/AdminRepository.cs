@@ -70,12 +70,14 @@ namespace TheNeqatcomApp.Infra.Repository
         INNER JOIN gpmeetings ON gploan.loanid = gpmeetings.loanid
         INNER JOIN gplenderstore ON gplenderstore.Lenderid = gpmeetings.lenderid
         INNER JOIN gpuser ON gplenderstore.lenderuserid = gpuser.userid
-        WHERE TRUNC(gpmeetings.startdate) + 3 <= TRUNC(SYSDATE)
+        WHERE DATEADD(DAY, 3, CAST(gpmeetings.startdate AS DATE)) <= CAST(GETDATE() AS DATE)
         AND (gploan.loanstatus = 1 OR gploan.loanstatus = 2)";
 
             IEnumerable<CancleLoanMsgforLender> loan = dbContext.Connection.Query<CancleLoanMsgforLender>(sql);
             return loan.ToList();
         }
+
+
 
         public CategoriesStatistics categoriesStatistics()
         {
@@ -199,17 +201,18 @@ namespace TheNeqatcomApp.Infra.Repository
         {
             var sql = @"
         UPDATE GPLoanee
-        SET warncounter = NVL(warncounter, 0) + 1
-        WHERE loaneeID = :LoaID;
+        SET warncounter = ISNULL(warncounter, 0) + 1
+        WHERE loaneeID = @LoaID;
 
         UPDATE GPComplaints
         SET managestatus = 0
-        WHERE complaintsid = :CID";
+        WHERE complaintsid = @CID";
 
             var parameters = new { LoaID = loaid, CID = CID };
 
             dbContext.Connection.Execute(sql, parameters);
         }
+
 
         public void ManageComplaints(int LID, int CID)
         {

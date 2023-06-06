@@ -209,36 +209,41 @@ AND l.POSTPONESTATUS = @statuss";
 
         public void UpdatePostponeStatus(int LoanID, int status, int loaneeidd)
         {
-            string query = @"IF(@status = 0) THEN
-    UPDATE GPLoan
-    SET POSTPONESTATUS = @status,
-        STARTDATE = ADD_MONTHS(STARTDATE, 1),
-        ENDDATE = ADD_MONTHS(ENDDATE, 1),
-         LATEPAYSTATUS=0,
-         BEFOREPAYSTATUS=0,
-         INPAYDATESTATUS=0
-    WHERE loanID = @LoanID;
+            string query = @"
+    IF @status = 0
+    BEGIN
+        UPDATE GPLoan
+        SET POSTPONESTATUS = @status,
+            STARTDATE = DATEADD(MONTH, 1, STARTDATE),
+            ENDDATE = DATEADD(MONTH, 1, ENDDATE),
+            LATEPAYSTATUS = 0,
+            BEFOREPAYSTATUS = 0,
+            INPAYDATESTATUS = 0
+        WHERE loanID = @LoanID;
 
-    UPDATE GPLoanee
-    SET POSTPONECOUNTER = POSTPONECOUNTER + 1
-    WHERE loaneeID = @loaneeidd;
+        UPDATE GPLoanee
+        SET POSTPONECOUNTER = POSTPONECOUNTER + 1
+        WHERE loaneeID = @loaneeidd;
 
-    INSERT INTO GPPurchasing (PAYMENTDATE, PAYMENTTYPE, LOANID)
-    VALUES (SYSDATE, 5, @LoanID);
-  ELSE
-    UPDATE GPLoan
-    SET POSTPONESTATUS = newStatus
-    WHERE loanID = @LoanID";
+        INSERT INTO GPPurchasing (PAYMENTDATE, PAYMENTTYPE, LOANID)
+        VALUES (GETDATE(), 5, @LoanID);
+    END
+    ELSE
+    BEGIN
+        UPDATE GPLoan
+        SET POSTPONESTATUS = @status
+        WHERE loanID = @LoanID;
+    END";
 
             var parameters = new
             {
                 LoanID,
                 status,
                 loaneeidd
-
             };
 
             _dbContext.Connection.Execute(query, parameters);
         }
+
     }
 }

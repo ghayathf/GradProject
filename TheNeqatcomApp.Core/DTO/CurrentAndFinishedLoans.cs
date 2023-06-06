@@ -44,5 +44,9 @@ namespace TheNeqatcomApp.Core.DTO
         public string Categoryname { get; set; }
         public string Categoryimage { get; set; }
         public string Bankaccount { get; set; }
+        public decimal Meetingid { get; set; }
+        public string Meetingurl { get; set; }
+        public decimal? Feedbackk { get; set; }
+        public string Meetingtime { get; set; }
     }
 }

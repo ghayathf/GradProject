@@ -84,14 +84,16 @@ namespace Neqatcom.Infra.Repository
 
         public List<CurrentAndFinishedLoans> GetCurrentAndFinishedLoans(int LID)
         {
-            var sql = @"SELECT L.*, O.*, LE.*, U.*, C.*
-                    FROM gploan L
-                    LEFT JOIN gpoffer O ON O.offerid = L.offerid
-                    LEFT JOIN gplenderstore LE ON LE.lenderid = O.lenderid
-                    LEFT JOIN gpuser U ON U.userid = LE.lenderuserid
-                    LEFT JOIN gpcategory C ON C.categoryID = O.categoryid
-                    WHERE L.loaneeid = @LID
-                    AND (L.loanstatus = 3 OR L.loanstatus = 4 or L.loanstatus = 0 or L.loanstatus = 2)";
+            var sql = @"
+    SELECT L.*, O.*, LE.*, U.*, C.*, M.*
+    FROM gploan L
+    LEFT JOIN gpoffer O ON O.offerid = L.offerid
+    LEFT JOIN gplenderstore LE ON LE.lenderid = O.lenderid
+    LEFT JOIN gpuser U ON U.userid = LE.lenderuserid
+    LEFT JOIN gpcategory C ON C.categoryID = O.categoryid
+    LEFT JOIN gpmeetings M ON M.loanid = L.loanid
+    WHERE L.loaneeid = @LID
+    AND (L.loanstatus = 3 OR L.loanstatus = 4 OR L.loanstatus = 0 OR L.loanstatus = 2)";
 
             var parameters = new { LID };
 

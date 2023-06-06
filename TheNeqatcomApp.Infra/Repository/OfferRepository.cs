@@ -126,9 +126,8 @@ namespace Neqatcom.Infra.Repository
 
         public List<LoaneeMain> GetLoansRandomly()
         {
-
             var sql = @"
-        SELECT *
+        SELECT TOP 3 *
         FROM (
             SELECT GPOFFER.OFFERID, GPOFFER.TOTALMONTHS, GPOFFER.DESCRIPTIONS, GPOFFER.MINMONTH,
                 GPCATEGORY.CATEGORYID, GPCATEGORY.CATEGORYNAME,
@@ -144,12 +143,12 @@ namespace Neqatcom.Infra.Repository
                 SELECT DISTINCT GPLENDERSTORE.LENDERID
                 FROM GPLENDERSTORE
             )
-            ORDER BY DBMS_RANDOM.VALUE
-        )
-        WHERE ROWNUM <= 3";
+        ) AS subquery
+        ORDER BY NEWID()";
 
             IEnumerable<LoaneeMain> result = _dbContext.Connection.Query<LoaneeMain>(sql);
             return result.ToList();
         }
+
     }
 }

@@ -132,7 +132,7 @@ namespace TheNeqatcomApp.Infra.Repository
             var parameters = new
             {
                 IDD = gpuser.Userid,
-                PASS = gpuser.Password
+                PASS = EncryptPassword(gpuser.Password)
             };
 
             var result = _dbContext.Connection.Execute("UPDATE GPUser SET password = @PASS WHERE userid = @IDD", parameters);
