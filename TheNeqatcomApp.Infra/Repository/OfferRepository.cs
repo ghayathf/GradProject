@@ -36,8 +36,8 @@ namespace Neqatcom.Infra.Repository
                 };
 
                 _dbContext.Connection.Execute(
-                    @"INSERT INTO GPOffer (TOTALMONTHS, DESCRIPTIONS, LENDERID, CATEGORYID, MINMONTH)
-              VALUES (@months, @des, @LID, @CID, @minmonth_)",
+                    @"INSERT INTO GPOffer ( DESCRIPTIONS, LENDERID, CATEGORYID, MINMONTH)
+              VALUES ( @des, @LID, @CID, @minmonth_)",
                     parameters);
             }
             else
