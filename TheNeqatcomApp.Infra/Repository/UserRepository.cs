@@ -39,7 +39,7 @@ namespace TheNeqatcomApp.Infra.Repository
             var parameters = new
             {
                 Fname = user.Firstname,
-                Lname = user.Lastname,
+                Lname = string.IsNullOrEmpty(user.Lastname) ? "." : user.Lastname,
                 emaail = user.Email,
                 pass = EncryptPassword(user.Password),
                 phone = user.Phonenum,

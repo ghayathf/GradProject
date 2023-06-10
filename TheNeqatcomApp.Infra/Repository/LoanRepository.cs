@@ -20,14 +20,14 @@ namespace TheNeqatcomApp.Infra.Repository
         public void ConfirmNewLoanInfo(Gploan loan)
         {
             string query = @"UPDATE GPLOAN
-                    SET TOTALMONTHS = @TotalMonths,
-                        TOTALPRICE = @TotalPrice,
-                        MONTHLYAMOUNT = @MonthlyAmount,
-                        STARTDATE = @StartDate,
-                        ENDDATE = @EndDate,
-                        LOANSTATUS = 2,
-                        estimatedprice = @TotalPrice
-                    WHERE LOANID = @LoanID";
+                SET TOTALMONTHS = @TotalMonths,
+                    TOTALPRICE = @TotalPrice,
+                    MONTHLYAMOUNT = @MonthlyAmount,
+                    STARTDATE = CASE WHEN @StartDate >= GETDATE() THEN @StartDate ELSE GETDATE() END,
+                    ENDDATE = CASE WHEN @EndDate >= CASE WHEN @StartDate >= GETDATE() THEN @StartDate ELSE GETDATE() END THEN @EndDate ELSE DATEADD(MONTH, @TotalMonths, CASE WHEN @StartDate >= GETDATE() THEN @StartDate ELSE GETDATE() END) END,
+                    LOANSTATUS = 2,
+                    estimatedprice = @TotalPrice
+                WHERE LOANID = @LoanID";
 
             var parameters = new
             {
