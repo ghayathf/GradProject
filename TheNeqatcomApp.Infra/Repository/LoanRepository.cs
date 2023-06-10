@@ -58,8 +58,7 @@ namespace TheNeqatcomApp.Infra.Repository
                 LoaneeIDD = loan.Loaneeid
             };
 
-            var result = _dbContext.Connection.Execute("INSERT INTO GPLOAN (TOTALMONTHS, TOTALPRICE, ESTIMATEDPRICE, MonthlyAmount, PreDaysCounter, LateDaysCounter, StartDate, EndDate, OfferID, LoaneeID) " +
-                                                        "VALUES (@TotalMon, @TotalPri, @EstimatedPri, @MonAmount, @PreCounter, @LateCounter, @Startd, @Endd, @OfferIDD, @LoaneeIDD)",
+            var result = _dbContext.Connection.Execute("INSERT INTO GPLOAN (TOTALMONTHS, TOTALPRICE, ESTIMATEDPRICE, MonthlyAmount, PreDaysCounter, LateDaysCounter, StartDate, EndDate, OfferID, LoaneeID) VALUES (@TotalMon, @TotalPri, @EstimatedPri, @MonAmount, @PreCounter, @LateCounter, @Startd, @Endd, @OfferIDD, @LoaneeIDD)",
                                                         parameters);
 
         }

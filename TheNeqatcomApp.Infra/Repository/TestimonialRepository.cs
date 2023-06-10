@@ -27,8 +27,7 @@ namespace TheNeqatcomApp.Infra.Repository
             p.Add("status", finalTestimonial.Testimonialstatus, dbType: DbType.Int32, direction: ParameterDirection.Input);
             p.Add("USERID", finalTestimonial.Userid, dbType: DbType.Int32, direction: ParameterDirection.Input);
 
-            string query = "INSERT INTO GPTestimonial(message, testimonialstatus, userid) " +
-                           "VALUES (@msg, @status, @USERID)";
+            string query = "INSERT INTO GPTestimonial(message, testimonialstatus, userid) VALUES (@msg, @status, @USERID)";
 
             var result = _dbcontext.Connection.Execute(query, p);
         }
@@ -47,10 +46,7 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<TestimonalUser> GetAllTestimonial()
         {
-            string query = "SELECT * " +
-                           "FROM GPTestimonial " +
-                           "INNER JOIN GPUSER ON GPTestimonial.userid = gpuser.userid " +
-                           "WHERE GPTestimonial.testimonialstatus = 0";
+            string query = "SELECT *  FROM GPTestimonial INNER JOIN GPUSER ON GPTestimonial.userid = gpuser.userid WHERE GPTestimonial.testimonialstatus = 0";
 
             IEnumerable<TestimonalUser> result = _dbcontext.Connection.Query<TestimonalUser>(query);
             return result.ToList();
@@ -124,9 +120,7 @@ namespace TheNeqatcomApp.Infra.Repository
             p.Add("status", finalTestimonial.Testimonialstatus, dbType: DbType.Int32, direction: ParameterDirection.Input);
             p.Add("USERID", finalTestimonial.Userid, dbType: DbType.Int32, direction: ParameterDirection.Input);
 
-            string query = "UPDATE GPTestimonial " +
-                           "SET message = @msg, testimonialstatus = @status " +
-                           "WHERE testimonialid = @idd";
+            string query = "UPDATE GPTestimonial SET message = @msg, testimonialstatus = @status WHERE testimonialid = @idd";
 
             var result = _dbcontext.Connection.Execute(query, p);
         }

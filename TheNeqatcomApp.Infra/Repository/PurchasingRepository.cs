@@ -99,20 +99,12 @@ namespace Neqatcom.Infra.Repository
             // Check if late payment for more than one month and insert into gpcomplaints
             if (v_latedayscounter > 30)
             {
-                query = "INSERT INTO gpcomplaints (COMPLIANTNOTES, leid, loid, DATEOFCOMPLAINTS, MANAGESTATUS) " +
-                        "VALUES ('Late payment for more than one month', " +
-                        "(SELECT LenderId FROM GPOFFER WHERE OfferId = (SELECT OfferId FROM GPLOAN WHERE LOANID = @LOANIDD)), " +
-                        "(SELECT LoaneeId FROM GPLOAN WHERE LOANID = @LOANIDD), GETDATE(), 3);" +
-                        "UPDATE GPLOAN SET LATEDAYSCOUNTER = 0 WHERE LOANID = @LOANIDD";
+                query = "INSERT INTO gpcomplaints (COMPLIANTNOTES, leid, loid, DATEOFCOMPLAINTS, MANAGESTATUS) VALUES ('Late payment for more than one month', (SELECT LenderId FROM GPOFFER WHERE OfferId = (SELECT OfferId FROM GPLOAN WHERE LOANID = @LOANIDD)), (SELECT LoaneeId FROM GPLOAN WHERE LOANID = @LOANIDD), GETDATE(), 3); UPDATE GPLOAN SET LATEDAYSCOUNTER = 0 WHERE LOANID = @LOANIDD";
                 _dbContext.Connection.Execute(query, new { LOANIDD = id });
             }
 
             // Update GPLOAN with other fields and set loanstatus
-            query = "UPDATE GPLOAN SET STARTDATE = DATEADD(MONTH, 1, STARTDATE), " +
-                    "ENDDATE = DATEADD(DAY, @LateDaysCounter, ENDDATE), " +
-                    "LATEPAYSTATUS = 0, BEFOREPAYSTATUS = 0, INPAYDATESTATUS = 0, LATEDAYSCOUNTER = @LateDaysCounter, " +
-                    "loanstatus = CASE WHEN ESTIMATEDPRICE = 0 THEN 4 ELSE loanstatus END " +
-                    "WHERE LOANID = @LOANIDD";
+            query = "UPDATE GPLOAN SET STARTDATE = DATEADD(MONTH, 1, STARTDATE), ENDDATE = DATEADD(DAY, @LateDaysCounter, ENDDATE), LATEPAYSTATUS = 0, BEFOREPAYSTATUS = 0, INPAYDATESTATUS = 0, LATEDAYSCOUNTER = @LateDaysCounter, loanstatus = CASE WHEN ESTIMATEDPRICE = 0 THEN 4 ELSE loanstatus END WHERE LOANID = @LOANIDD";
             var updateParameters = new { LOANIDD = id, LateDaysCounter = v_latedayscounter };
             _dbContext.Connection.Execute(query, updateParameters);
         }
@@ -179,20 +171,12 @@ namespace Neqatcom.Infra.Repository
             // Check if late payment for more than one month and insert into gpcomplaints
             if (v_latedayscounter > 30)
             {
-                query = "INSERT INTO gpcomplaints (COMPLIANTNOTES, leid, loid, DATEOFCOMPLAINTS, MANAGESTATUS) " +
-                        "VALUES ('Late payment for more than one month', " +
-                        "(SELECT LenderId FROM GPOFFER WHERE OfferId = (SELECT OfferId FROM GPLOAN WHERE LOANID = @LOANIDD)), " +
-                        "(SELECT LoaneeId FROM GPLOAN WHERE LOANID = @LOANIDD), GETDATE(), 3);" +
-                        "UPDATE GPLOAN SET LATEDAYSCOUNTER = 0 WHERE LOANID = @LOANIDD";
+                query = "INSERT INTO gpcomplaints (COMPLIANTNOTES, leid, loid, DATEOFCOMPLAINTS, MANAGESTATUS) VALUES ('Late payment for more than one month', (SELECT LenderId FROM GPOFFER WHERE OfferId = (SELECT OfferId FROM GPLOAN WHERE LOANID = @LOANIDD)), (SELECT LoaneeId FROM GPLOAN WHERE LOANID = @LOANIDD), GETDATE(), 3);UPDATE GPLOAN SET LATEDAYSCOUNTER = 0 WHERE LOANID = @LOANIDD";
                 _dbContext.Connection.Execute(query, new { LOANIDD = id });
             }
 
             // Update GPLOAN with other fields and set loanstatus
-            query = "UPDATE GPLOAN SET STARTDATE = DATEADD(MONTH, 1, STARTDATE), " +
-                    "ENDDATE = DATEADD(DAY, @LateDaysCounter, ENDDATE), " +
-                    "LATEPAYSTATUS = 0, BEFOREPAYSTATUS = 0, INPAYDATESTATUS = 0, LATEDAYSCOUNTER = @LateDaysCounter, " +
-                    "loanstatus = CASE WHEN ESTIMATEDPRICE = 0 THEN 4 ELSE loanstatus END " +
-                    "WHERE LOANID = @LOANIDD";
+            query = "UPDATE GPLOAN SET STARTDATE = DATEADD(MONTH, 1, STARTDATE), ENDDATE = DATEADD(DAY, @LateDaysCounter, ENDDATE), LATEPAYSTATUS = 0, BEFOREPAYSTATUS = 0, INPAYDATESTATUS = 0, LATEDAYSCOUNTER = @LateDaysCounter, loanstatus = CASE WHEN ESTIMATEDPRICE = 0 THEN 4 ELSE loanstatus END WHERE LOANID = @LOANIDD";
             var updateParameters = new { LOANIDD = id, LateDaysCounter = v_latedayscounter };
             _dbContext.Connection.Execute(query, updateParameters);
 
@@ -263,20 +247,12 @@ namespace Neqatcom.Infra.Repository
             // Check if late payment for more than one month and insert into gpcomplaints
             if (v_latedayscounter > 30)
             {
-                query = "INSERT INTO gpcomplaints (COMPLIANTNOTES, leid, loid, DATEOFCOMPLAINTS, MANAGESTATUS) " +
-                        "VALUES ('Late payment for more than one month', " +
-                        "(SELECT LenderId FROM GPOFFER WHERE OfferId = (SELECT OfferId FROM GPLOAN WHERE LOANID = @LOANIDD)), " +
-                        "(SELECT LoaneeId FROM GPLOAN WHERE LOANID = @LOANIDD), GETDATE(), 3);" +
-                        "UPDATE GPLOAN SET LATEDAYSCOUNTER = 0 WHERE LOANID = @LOANIDD";
+                query = "INSERT INTO gpcomplaints (COMPLIANTNOTES, leid, loid, DATEOFCOMPLAINTS, MANAGESTATUS) VALUES ('Late payment for more than one month', (SELECT LenderId FROM GPOFFER WHERE OfferId = (SELECT OfferId FROM GPLOAN WHERE LOANID = @LOANIDD)), (SELECT LoaneeId FROM GPLOAN WHERE LOANID = @LOANIDD), GETDATE(), 3);UPDATE GPLOAN SET LATEDAYSCOUNTER = 0 WHERE LOANID = @LOANIDD";
                 _dbContext.Connection.Execute(query, new { LOANIDD = id });
             }
 
             // Update GPLOAN with other fields and set loanstatus
-            query = "UPDATE GPLOAN SET STARTDATE = DATEADD(MONTH, 1, STARTDATE), " +
-                    "ENDDATE = DATEADD(DAY, @LateDaysCounter, ENDDATE), " +
-                    "LATEPAYSTATUS = 0, BEFOREPAYSTATUS = 0, INPAYDATESTATUS = 0, LATEDAYSCOUNTER = @LateDaysCounter, " +
-                    "loanstatus = CASE WHEN ESTIMATEDPRICE = 0 THEN 4 ELSE loanstatus END " +
-                    "WHERE LOANID = @LOANIDD";
+            query = "UPDATE GPLOAN SET STARTDATE = DATEADD(MONTH, 1, STARTDATE), ENDDATE = DATEADD(DAY, @LateDaysCounter, ENDDATE), LATEPAYSTATUS = 0, BEFOREPAYSTATUS = 0, INPAYDATESTATUS = 0, LATEDAYSCOUNTER = @LateDaysCounter, loanstatus = CASE WHEN ESTIMATEDPRICE = 0 THEN 4 ELSE loanstatus END WHERE LOANID = @LOANIDD";
             var updateParameters = new { LOANIDD = id, LateDaysCounter = v_latedayscounter };
             _dbContext.Connection.Execute(query, updateParameters);
         }

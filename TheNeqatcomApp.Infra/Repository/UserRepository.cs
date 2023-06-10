@@ -49,8 +49,7 @@ namespace TheNeqatcomApp.Infra.Repository
                 img = string.IsNullOrEmpty(user.Userimage) ? "55100838-9016-4739-9d47-9108094e44d4_261-2617807_person-question-mark-png.png" : user.Userimage
             };
 
-            var result = _dbContext.Connection.Execute("INSERT INTO GPUser (firstname, lastname, email, password, phonenum, address, role, username, userimage) " +
-                                                        "VALUES (@Fname, @Lname, @emaail, @pass, @phone, @addr, @R, @Uname, @img)",
+            var result = _dbContext.Connection.Execute("INSERT INTO GPUser (firstname, lastname, email, password, phonenum, address, role, username, userimage) VALUES (@Fname, @Lname, @emaail, @pass, @phone, @addr, @R, @Uname, @img)",
                                                         parameters);
         }
 
@@ -77,16 +76,7 @@ namespace TheNeqatcomApp.Infra.Repository
                 img = user.Userimage
             };
 
-            var result = _dbContext.Connection.Execute("UPDATE GPUser " +
-                                                       "SET firstname = @Fname, " +
-                                                       "lastname = @Lname, " +
-                                                       "email = @emaail, " +
-                                                       "phonenum = @phone, " +
-                                                       "address = @addr, " +
-                                                       "role = @R, " +
-                                                       "username = @Uname, " +
-                                                       "userimage = @img " +
-                                                       "WHERE userid = @idd",
+            var result = _dbContext.Connection.Execute("UPDATE GPUser SET firstname = @Fname, lastname = @Lname, email = @emaail, phonenum = @phone, address = @addr, role = @R, username = @Uname, userimage = @img WHERE userid = @idd",
                                                        parameters);
         
     }

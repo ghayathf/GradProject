@@ -30,8 +30,7 @@ namespace Neqatcom.Infra.Repository
             p.Add("Meeting_Time", meeting.Meetingtime, DbType.String, ParameterDirection.Input);
             p.Add("LoanIdd", meeting.Loanid, DbType.Int32, ParameterDirection.Input);
 
-            dbContext.Connection.Execute("INSERT INTO GPMEETINGS (startdate, MeetingUrl, feedbackk, Loaneeid, Lenderid, MeetingTime, LoanId) " +
-              "VALUES (@MeetingDate, @Meeting_Url, @feed_back, @LoaneeIDD, @LenderIDD, @Meeting_Time, @LoanIdd)", p);
+            dbContext.Connection.Execute("INSERT INTO GPMEETINGS (startdate, MeetingUrl, feedbackk, Loaneeid, Lenderid, MeetingTime, LoanId) VALUES (@MeetingDate, @Meeting_Url, @feed_back, @LoaneeIDD, @LenderIDD, @Meeting_Time, @LoanIdd)", p);
         }
 
         public void DeleteMeeting(int IDD)

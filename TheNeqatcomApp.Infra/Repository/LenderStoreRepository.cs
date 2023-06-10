@@ -30,8 +30,7 @@ namespace TheNeqatcomApp.Infra.Repository
                 BankAccount = gplenderstore.Bankaccount
             };
 
-            var result = _dbContext.Connection.Execute("INSERT INTO GPLENDERSTORE (COMMERCIALREGISTER, LENDERUSERID, REGISTERSTATUS, SHADOWSTATUS, COMPANYSIZE, SITEURL, bankaccount) " +
-                                                        "VALUES (@CommercialRegister, @UserID, @RegisterStatus, @ShadowStatus, @CompanySize, @SiteURL, @BankAccount)",
+            var result = _dbContext.Connection.Execute("INSERT INTO GPLENDERSTORE (COMMERCIALREGISTER, LENDERUSERID, REGISTERSTATUS, SHADOWSTATUS, COMPANYSIZE, SITEURL, bankaccount) VALUES (@CommercialRegister, @UserID, @RegisterStatus, @ShadowStatus, @CompanySize, @SiteURL, @BankAccount)",
                                                         parameters);
         }
 

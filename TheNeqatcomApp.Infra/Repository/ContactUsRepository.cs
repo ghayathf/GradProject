@@ -19,8 +19,7 @@ namespace TheNeqatcomApp.Infra.Repository
         }
         public void CreateContactUs(Gpcontactu contact)
         {
-            string query = "INSERT INTO GPCONTACTUS (FirstNamee, LastNamee, Emaill, PhoneNumber, Message) " +
-                           "VALUES (@FirstName, @LastName, @Email, @PhoneNumber, @Message)";
+            string query = "INSERT INTO GPCONTACTUS (FirstNamee, LastNamee, Emaill, PhoneNumber, Message) VALUES (@FirstName, @LastName, @Email, @PhoneNumber, @Message)";
             var parameters = new
             {
                 FirstName = contact.Firstnamee,
@@ -65,12 +64,7 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public void UpdateContactUs(Gpcontactu contact)
         {
-            string query = "UPDATE GPCONTACTUS " +
-                           "SET FirstNamee = @FirstName, " +
-                           "    LastNamee = @LastName, " +
-                           "    Emaill = @Email, " +
-                           "    PhoneNumber = @PhoneNumber " +
-                           "WHERE ContactID = @ContactId";
+            string query = "UPDATE GPCONTACTUS SET FirstNamee = @FirstName, LastNamee = @LastName, Emaill = @Email, PhoneNumber = @PhoneNumber WHERE ContactID = @ContactId";
             var parameters = new
             {
                 FirstName = contact.Firstnamee,
