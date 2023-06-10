@@ -27,7 +27,13 @@ namespace TheNeqatcomApp.Infra.Repository
 
             var result = _dbContext.Connection.Execute("INSERT INTO Notifications (NotificationsMessage, userID, NotificationsDate) VALUES (@Message, @useridd, SYSDATE)", p);
         }
-
+        public void DeleteNotificationsByUserId(int id)
+        {
+            var p = new DynamicParameters();
+            p.Add("uid", id, DbType.Int32, direction: ParameterDirection.Input);
+            var query = "DELETE FROM notifications WHERE userid = @uid";
+            var result = _dbContext.Connection.Execute(query, p);
+        }
 
         public List<Notification> GetNotificationById(int id)
         {

@@ -28,5 +28,11 @@ namespace TheNeqatcomApp.API.Controllers
         {
             _notificationsService.CreateNewNotification(notification);
         }
+        [HttpDelete]
+        [Route("DeleteNotificationsByUSerID/{id}")]
+        public void DeleteNotificationsByUSerID(int id)
+        {
+            _notificationsService.DeleteNotificationsByUSerID(id);
+        }
     }
 }

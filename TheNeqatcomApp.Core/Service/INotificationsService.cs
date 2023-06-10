@@ -10,5 +10,6 @@ namespace TheNeqatcomApp.Core.Service
         List<Notification> GetNotificationById(int id);
     
         void CreateNewNotification(Notification notification);
+        void DeleteNotificationsByUSerID(int id);
     }
 }

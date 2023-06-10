@@ -244,7 +244,7 @@ FROM GPComplaints
 LEFT JOIN GPLoanee ON GPComplaints.LOID = GPLoanee.loaneeID
 LEFT JOIN GPLenderStore ON GPComplaints.LEID = GPLenderStore.lenderID
 LEFT JOIN GPUser ON  GPLenderStore.LENDERuserID = GPUser.userID
-where GPComplaints.managestatus=2";
+where GPComplaints.managestatus=1";
 
             return dbContext.Connection.Query<LoaneeComplaintsDTO>(sql).ToList();
         }
