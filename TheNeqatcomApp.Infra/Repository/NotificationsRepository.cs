@@ -25,9 +25,9 @@ namespace TheNeqatcomApp.Infra.Repository
             p.Add("Message", notification.Notificationsmessage, DbType.String, direction: ParameterDirection.Input);
             p.Add("useridd", notification.Userid, DbType.Int32, direction: ParameterDirection.Input);
 
-            var result = _dbContext.Connection.Execute("INSERT INTO Notifications (NotificationsMessage, userID, NotificationsDate) VALUES (@Message, @useridd, SYSDATE)", p);
+            var result = _dbContext.Connection.Execute("INSERT INTO Notifications (NotificationsMessage, userID, NotificationsDate) VALUES (@Message, @useridd, GETDATE())", p);
         }
-        public void DeleteNotificationsByUserId(int id)
+        public void DeleteNotificationsByUSerID(int id)
         {
             var p = new DynamicParameters();
             p.Add("uid", id, DbType.Int32, direction: ParameterDirection.Input);
@@ -36,12 +36,13 @@ namespace TheNeqatcomApp.Infra.Repository
         }
 
         public List<Notification> GetNotificationById(int id)
-        {
+        {var p = new DynamicParameters();
+            p.Add("id", id, DbType.Int32, ParameterDirection.Input);
+
             string query = @"SELECT * FROM Notifications 
                      WHERE userid = @id";
 
-            var p = new DynamicParameters();
-            p.Add("id", id, DbType.Int32, ParameterDirection.Input);
+            
 
             IEnumerable<Notification> result = _dbContext.Connection.Query<Notification>(query, p);
             return result.ToList();

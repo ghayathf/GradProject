@@ -35,10 +35,12 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public void DeleteTestimonial(int id)
         {
-            var p = new DynamicParameters();
-            p.Add("idd", id, DbType.Int32, ParameterDirection.Input);
+            var parameters = new
+            {
+                id
+            };
 
-            var result = _dbcontext.Connection.Execute("GP_Testimonial_Package.DELETETestimoniaL", p, commandType: CommandType.StoredProcedure);
+            var result = _dbcontext.Connection.Execute("Delete from GPTestimonial where testimonialid = @id",parameters);
         }
 
 
@@ -93,15 +95,7 @@ namespace TheNeqatcomApp.Infra.Repository
 
         public List<TestimonalUser> GetTestimonialHome()
         {
-            string query = "SELECT TOP 3 " +
-                           "GPTestimonial.testimonialid, GPTestimonial.userid, GPTestimonial.testimonialstatus, " +
-                           "GPUSER.userid AS gpuserid, GPUSER.username, GPUSER.email " +
-                           "INTO #RandomizedTestimonials " +
-                           "FROM GPTestimonial " +
-                           "INNER JOIN GPUSER ON GPTestimonial.userid = gpuser.userid " +
-                           "WHERE GPTestimonial.testimonialstatus = 1 " +
-                           "ORDER BY NEWID(); " +
-                           "SELECT * FROM #RandomizedTestimonials";
+            string query = "SELECT TOP 3 GPTestimonial.*, GPUSER.userid AS gpuserid,GPUSER.Role, GPUSER.username,gpuser.FirstName,gpuser.LastName,GPUser.userImage INTO #RandomizedTestimonialssss FROM GPTestimonial INNER JOIN GPUSER ON GPTestimonial.userid = gpuser.userid WHERE GPTestimonial.testimonialstatus = 1 ORDER BY NEWID();SELECT* FROM #RandomizedTestimonialssss";
 
             IEnumerable<TestimonalUser> result = _dbcontext.Connection.Query<TestimonalUser>(query);
             return result.ToList();

@@ -64,6 +64,7 @@ namespace TheNeqatcomApp.Infra.Service
                 else if (result.Role == "Loanee")
                 {
                     claims.Add(new Claim("Loaneeid", result.loaneeId.ToString()));
+                    claims.Add(new Claim("CreditScore", result.Creditscore.ToString()));
                 }
                 var tokenOptions = new JwtSecurityToken(
                     claims: claims,

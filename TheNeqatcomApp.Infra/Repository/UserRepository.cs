@@ -103,7 +103,8 @@ namespace TheNeqatcomApp.Infra.Repository
             string query = @"
     SELECT U.USERNAME, U.userid, U.firstname, U.lastname, U.email, U.phonenum, U.userimage, U.role,
     CASE WHEN U.role = 'Lender' THEN L.lenderid ELSE NULL END AS lenderId,
-    CASE WHEN U.role = 'Loanee' THEN LN.loaneeid ELSE NULL END AS loaneeId
+    CASE WHEN U.role = 'Loanee' THEN LN.loaneeid ELSE NULL END AS loaneeId,
+LN.creditscore
     FROM GPUser U
     LEFT JOIN GPlenderstore L ON U.userid = L.lenderuserid AND U.role = 'Lender'
     LEFT JOIN GPloanee LN ON U.userid = LN.loaneeuserid AND U.role = 'Loanee'

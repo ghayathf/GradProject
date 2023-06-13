@@ -217,13 +217,13 @@ namespace TheNeqatcomApp.Infra.Repository
         public void ManageComplaints(int LID, int CID)
         {
             var sql = @" UPDATE GPLenderStore
-            SET warncounter = NVL(warncounter, 0) + 1,
+            SET warncounter = ISNULL(warncounter, 0) + 1,
                 ShadowStatus = CASE
-                                    WHEN NVL(warncounter, 0) + 1 <= 3 THEN ShadowStatus
+                                    WHEN ISNULL(warncounter, 0) + 1 <= 3 THEN ShadowStatus
                                     ELSE 1
                                 END,
                 WarnDate = CASE
-                                WHEN NVL(warncounter, 0) + 1 <= 3 THEN WarnDate
+                                WHEN ISNULL(warncounter, 0) + 1 <= 3 THEN WarnDate
                                 ELSE GetDate()
                             END
             WHERE lenderID = @LID;
@@ -232,7 +232,7 @@ namespace TheNeqatcomApp.Infra.Repository
             SET GPComplaints.managestatus = 0
             WHERE GPComplaints.complaintsid = @CID";
 
-            var parameters = new { LID = LID, CID = CID };
+            var parameters = new { LID = LID, CID = CID }; 
 
             dbContext.Connection.Execute(sql, parameters);
         }
