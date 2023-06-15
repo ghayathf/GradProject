@@ -53,9 +53,15 @@ namespace TheNeqatcomApp.API.Controllers
         {
             var file = Request.Form.Files[0];
             var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            var fullpath = Path.Combine("C:\\neqatcom_Angular\\src\\assets\\HomeAssets\\images", fileName);
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
+            var fullPath = Path.Combine(directoryPath, fileName);
 
-            using (var stream = new FileStream(fullpath, FileMode.Create))
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
             {
                 file.CopyTo(stream);
             }

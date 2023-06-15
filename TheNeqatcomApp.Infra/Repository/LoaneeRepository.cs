@@ -93,7 +93,7 @@ namespace Neqatcom.Infra.Repository
     LEFT JOIN gpcategory C ON C.categoryID = O.categoryid
     LEFT JOIN gpmeetings M ON M.loanid = L.loanid
     WHERE L.loaneeid = @LID
-    AND (L.loanstatus = 3 OR L.loanstatus = 4 OR L.loanstatus = 0 OR L.loanstatus = 2)";
+    AND (L.loanstatus = 3 OR L.loanstatus = 4 OR L.loanstatus = 0)";
 
             var parameters = new { LID };
 
@@ -123,7 +123,7 @@ namespace Neqatcom.Infra.Repository
                     LEFT JOIN gplenderstore LE ON LE.lenderid = O.lenderid
                     LEFT JOIN gpuser U ON U.userid = LE.lenderuserid
                     WHERE L.loaneeid = @loaneeidd
-                    AND L.loanstatus = 2";
+                    AND (L.loanstatus = 2 OR L.loanstatus = 1)";
 
             var parameters = new { loaneeidd };
 
