@@ -6,6 +6,9 @@ using System;
 using TheNeqatcomApp.Core.Data;
 using TheNeqatcomApp.Core.DTO;
 using TheNeqatcomApp.Core.Service;
+using System.Threading.Tasks;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.Storage;
 
 namespace TheNeqatcomApp.API.Controllers
 {
@@ -89,26 +92,42 @@ namespace TheNeqatcomApp.API.Controllers
         }
         [Route("UploadImage")]
         [HttpPost]
-        public Gpuser UploadImage()
+        public async Task<Gpuser> UploadImage()
         {
             var file = Request.Form.Files[0];
             var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
-            var fullPath = Path.Combine(directoryPath, fileName);
 
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
+            // Retrieve the connection string for your Azure Blob Storage
+            string storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=neqatcomstorage;AccountKey=CAx4ethtWMCMon9qcXk/ZetYTUtYyzhlWmAq+fj5sGXoUT5cihFTdH8eLKjQqCsDDdwWg7gB4D2B+ASt0oVPqQ==;EndpointSuffix=core.windows.net";
 
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            // Create a CloudStorageAccount object using the connection string
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
+
+            // Create a CloudBlobClient object to interact with Blob storage
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+            // Create a container reference (replace 'images-container' with your desired container name)
+            CloudBlobContainer container = blobClient.GetContainerReference("images-container");
+
+            // Create the container if it doesn't exist
+            await container.CreateIfNotExistsAsync();
+
+            // Set the public access level of the container to allow public read access to the images
+            await container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+
+            // Create a CloudBlockBlob object to represent the uploaded image
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
+
+            // Upload the image file to Azure Blob Storage
+            using (var stream = file.OpenReadStream())
             {
-                file.CopyTo(stream);
+                await blockBlob.UploadFromStreamAsync(stream);
             }
 
             Gpuser item = new Gpuser();
-            item.Userimage = fileName;
+            item.Userimage = blockBlob.Uri.ToString(); // Store the image URL instead of the file name
             return item;
         }
+
     }
 }
