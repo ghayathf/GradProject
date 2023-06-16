@@ -67,7 +67,8 @@ namespace TheNeqatcomApp.API.Controllers
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
             // Create a container reference (replace 'images-container' with your desired container name)
-            CloudBlobContainer container = blobClient.GetContainerReference("images-container");
+            string containerName = "images-container";
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
 
             // Create the container if it doesn't exist
             await container.CreateIfNotExistsAsync();
@@ -83,7 +84,8 @@ namespace TheNeqatcomApp.API.Controllers
             {
                 await blockBlob.UploadFromStreamAsync(stream);
             }
-            
+
+
 
             Gpcategory item = new Gpcategory();
             item.Categoryimage = fileName;
