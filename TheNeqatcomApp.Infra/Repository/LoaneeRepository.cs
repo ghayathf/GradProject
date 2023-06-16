@@ -73,9 +73,9 @@ namespace Neqatcom.Infra.Repository
 
         public List<LoaneeUser> GetAllLoaneeUser()
         {
-            var sql = @"SELECT *
+            var sql = @"SELECT gploanee.*,gpuser.*
                     FROM gploanee
-                    JOIN gpuser ON gploanee.loaneeuserid = gpuser.userid";
+                    inner JOIN gpuser ON gploanee.loaneeuserid = gpuser.userid";
 
             IEnumerable<LoaneeUser> loaneeUsers = _dbContext.Connection.Query<LoaneeUser>(sql);
 

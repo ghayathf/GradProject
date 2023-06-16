@@ -57,22 +57,28 @@ namespace TheNeqatcomApp.Infra.Repository
         public List<TestimonalUser> GetTestimonialAccepted()
         {
             string query = @"
-        WITH RandomizedTestimonials AS (
-            SELECT TOP 3
-                GPTestimonial.message,
-                GPTestimonial.testimonialid,
-                GPTestimonial.userid AS testimonial_userid,
-                GPTestimonial.testimonialstatus,
-                GPUSER.userid AS Userid,
-                GPUSER.firstname,
-                GPUSER.lastname,
-                GPUSER.email
-            FROM GPTestimonial
-            INNER JOIN GPUSER ON GPTestimonial.userid = GPUSER.userid
-            WHERE GPTestimonial.testimonialstatus = 1
-            ORDER BY NEWID()
-        )
-        SELECT * FROM RandomizedTestimonials";
+        WITH Testimonials AS (
+    SELECT
+        GPTestimonial.message,
+        GPTestimonial.testimonialid,
+        GPTestimonial.userid AS testimonial_userid,
+        GPTestimonial.testimonialstatus,
+        GPUSER.userid AS Userid,
+        GPUSER.firstname,
+        GPUSER.lastname,
+        GPUSER.userimage,
+        GPUSER.email
+    FROM GPTestimonial
+    INNER JOIN GPUSER ON GPTestimonial.userid = GPUSER.userid
+    WHERE GPTestimonial.testimonialstatus = 1
+)
+SELECT *
+FROM (
+    SELECT *,
+        NEWID() AS RandomOrder
+    FROM Testimonials
+) AS RandomizedTestimonials
+ORDER BY RandomOrder;";
 
             IEnumerable<TestimonalUser> result = _dbcontext.Connection.Query<TestimonalUser>(query);
             return result.ToList();
