@@ -96,17 +96,66 @@ namespace TheNeqatcomApp.API.Controllers
         {
             var file = Request.Form.Files[0];
             var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            var fullpath = Path.Combine("C:\\neqatcom_Angular\\src\\assets\\HomeAssets\\images", fileName);
 
-            using (var stream = new FileStream(fullpath, FileMode.Create))
+            // Retrieve the connection string for your Azure Blob Storage
+            string storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=neqatcomstorage;AccountKey=CAx4ethtWMCMon9qcXk/ZetYTUtYyzhlWmAq+fj5sGXoUT5cihFTdH8eLKjQqCsDDdwWg7gB4D2B+ASt0oVPqQ==;EndpointSuffix=core.windows.net";
+
+            // Create a CloudStorageAccount object using the connection string
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
+
+            // Create a CloudBlobClient object to interact with Blob storage
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+            // Create a container reference (replace 'images-container' with your desired container name)
+            string containerName = "images-container";
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
+
+            // Create the container if it doesn't exist
+            await container.CreateIfNotExistsAsync();
+
+            // Set the public access level of the container to allow public read access to the images
+            await container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+
+            // Create a CloudBlockBlob object to represent the uploaded image
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
+
+            // Set the content type based on the file extension
+            string contentType;
+            switch (Path.GetExtension(fileName).ToLower())
             {
-                file.CopyTo(stream);
+                case ".jpg":
+                case ".jpeg":
+                    contentType = "image/jpeg";
+                    break;
+                case ".png":
+                    contentType = "image/png";
+                    break;
+                case ".gif":
+                    contentType = "image/gif";
+                    break;
+                case ".bmp":
+                    contentType = "image/bmp";
+                    break;
+                case ".tiff":
+                    contentType = "image/tiff";
+                    break;
+                default:
+                    contentType = "application/octet-stream"; // Set a default content type if the file type is not recognized
+                    break;
+            }
+            blockBlob.Properties.ContentType = contentType;
+
+            // Upload the image file to Azure Blob Storage
+            using (var stream = file.OpenReadStream())
+            {
+                await blockBlob.UploadFromStreamAsync(stream);
             }
 
             Gpuser item = new Gpuser();
-            item.Userimage = fileName; // Store the image URL instead of the file name
+            item.Userimage = blockBlob.Uri.ToString(); // Store the image URL instead of the blob name
             return item;
         }
+
 
     }
 }

@@ -79,6 +79,32 @@ namespace TheNeqatcomApp.API.Controllers
             // Create a CloudBlockBlob object to represent the uploaded image
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
 
+            // Set the content type based on the file extension
+            string contentType;
+            switch (Path.GetExtension(fileName).ToLower())
+            {
+                case ".jpg":
+                case ".jpeg":
+                    contentType = "image/jpeg";
+                    break;
+                case ".png":
+                    contentType = "image/png";
+                    break;
+                case ".gif":
+                    contentType = "image/gif";
+                    break;
+                case ".bmp":
+                    contentType = "image/bmp";
+                    break;
+                case ".tiff":
+                    contentType = "image/tiff";
+                    break;
+                default:
+                    contentType = "application/octet-stream"; // Set a default content type if the file type is not recognized
+                    break;
+            }
+            blockBlob.Properties.ContentType = contentType;
+
             // Upload the image file to Azure Blob Storage
             using (var stream = file.OpenReadStream())
             {
