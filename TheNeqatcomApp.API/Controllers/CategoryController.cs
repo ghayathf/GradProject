@@ -85,6 +85,7 @@ namespace TheNeqatcomApp.API.Controllers
             {
                 case ".jpg":
                 case ".jpeg":
+                case ".jfif":
                     contentType = "image/jpeg";
                     break;
                 case ".png":
