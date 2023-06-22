@@ -59,7 +59,8 @@ namespace Neqatcom.Infra.Repository
                 FROM GPOFFER
                 LEFT JOIN GPCATEGORY ON GPOFFER.CATEGORYID = GPCATEGORY.CATEGORYID
                 LEFT JOIN GPLENDERSTORE ON GPOFFER.LENDERID = GPLENDERSTORE.LENDERID
-                LEFT JOIN GPUSER ON GPLENDERSTORE.LenderUserID = GPUSER.UserID";
+                LEFT JOIN GPUSER ON GPLENDERSTORE.LenderUserID = GPUSER.UserID
+				where GPLenderStore.ShadowStatus = 0";
             var result = _dbContext.Connection.Query<LoaneeMain>(sql);
 
             return result.ToList();

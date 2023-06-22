@@ -85,13 +85,12 @@ namespace Neqatcom.Infra.Repository
         public List<CurrentAndFinishedLoans> GetCurrentAndFinishedLoans(int LID)
         {
             var sql = @"
-    SELECT L.*, O.*, LE.*, U.*, C.*, M.*
+    SELECT L.*, O.*, LE.*, U.*, C.*
     FROM gploan L
     LEFT JOIN gpoffer O ON O.offerid = L.offerid
     LEFT JOIN gplenderstore LE ON LE.lenderid = O.lenderid
     LEFT JOIN gpuser U ON U.userid = LE.lenderuserid
     LEFT JOIN gpcategory C ON C.categoryID = O.categoryid
-    LEFT JOIN gpmeetings M ON M.loanid = L.loanid
     WHERE L.loaneeid = @LID
     AND (L.loanstatus = 3 OR L.loanstatus = 4 OR L.loanstatus = 0)";
 
@@ -115,14 +114,15 @@ namespace Neqatcom.Infra.Repository
 
         public List<ConfirmLoans> GetLoansToConfirm(int loaneeidd)
         {
-            var sql = @"SELECT M.*, L.*, O.*, C.*, LE.*, U.*
+            var sql = @"SELECT M.*, L.LoanID,L.TotalMonths,L.TotalPrice,L.EstimatedPrice,L.monthlyAmount,L.preDaysCounter,L.LateDaysCounter,L.endDate,L.OfferId,L.LoaneeId
+,L.Loanstatus,L.Postponestatus,L.Postponedate,L.Beforepaystatus,L.Inpaydatestatus,L.Latepaystatus, O.*, C.*, LE.*, U.*
                     FROM gpmeetings M
                     LEFT JOIN gploan L ON M.loanid = L.loanid
                     LEFT JOIN gpoffer O ON O.offerid = L.offerid
                     LEFT JOIN gpcategory C ON C.categoryid = O.categoryid
                     LEFT JOIN gplenderstore LE ON LE.lenderid = O.lenderid
                     LEFT JOIN gpuser U ON U.userid = LE.lenderuserid
-                    WHERE L.loaneeid = @loaneeidd
+                    WHERE L.loaneeid = 1
                     AND (L.loanstatus = 2 OR L.loanstatus = 1)";
 
             var parameters = new { loaneeidd };

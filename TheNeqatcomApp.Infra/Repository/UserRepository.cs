@@ -96,26 +96,35 @@ namespace TheNeqatcomApp.Infra.Repository
         {
             var parameters = new
             {
-                email = login.Email,
-                password = EncryptPassword(login.Password)
+                email = EscapeSpecialCharacters(login.Email),
+                password = EncryptPassword(EscapeSpecialCharacters(login.Password))
             };
 
             string query = @"
-    SELECT U.USERNAME, U.userid, U.firstname, U.lastname, U.email, U.phonenum, U.userimage, U.role,
-    CASE WHEN U.role = 'Lender' THEN L.lenderid ELSE NULL END AS lenderId,
-    CASE WHEN U.role = 'Loanee' THEN LN.loaneeid ELSE NULL END AS loaneeId,
-LN.creditscore
-    FROM GPUser U
-    LEFT JOIN GPlenderstore L ON U.userid = L.lenderuserid AND U.role = 'Lender'
-    LEFT JOIN GPloanee LN ON U.userid = LN.loaneeuserid AND U.role = 'Loanee'
-    WHERE U.email = @email
-    AND U.password = @password";
+        SELECT U.USERNAME, U.userid, U.firstname, U.lastname, U.email, U.phonenum, U.userimage, U.role,
+        CASE WHEN U.role = 'Lender' THEN L.lenderid ELSE NULL END AS lenderId,
+        CASE WHEN U.role = 'Loanee' THEN LN.loaneeid ELSE NULL END AS loaneeId,
+        LN.creditscore
+        FROM GPUser U
+        LEFT JOIN GPlenderstore L ON U.userid = L.lenderuserid AND U.role = 'Lender'
+        LEFT JOIN GPloanee LN ON U.userid = LN.loaneeuserid AND U.role = 'Loanee'
+        WHERE U.email = @email
+        AND U.password = @password";
 
             var result = _dbContext.Connection.QuerySingleOrDefault<LoginClaims>(query, parameters);
 
             return result;
         }
+        private string EscapeSpecialCharacters(string input)
+        {
+            // Escape special characters: <, >, ', "
+            input = input.Replace("<", "&lt;")
+                         .Replace(">", "&gt;")
+                         .Replace("'", "''")
+                         .Replace("\"", "\"\"");
 
+            return input;
+        }
 
 
         public void updatePassword(Gpuser gpuser)

@@ -162,7 +162,14 @@ namespace TheNeqatcomApp.Infra.Repository
         INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
         WHERE CAST(gploan.startdate AS DATE) < CAST(GETDATE() AS DATE)
         AND gploan.latepaystatus = 0
-        AND gploan.loanstatus = 3";
+        AND gploan.loanstatus = 3;
+UPDATE gploan
+        SET postponedate = GETDATE(),
+            latepaystatus = 1,
+            LATEDAYSCOUNTER = LATEDAYSCOUNTER + 1
+        WHERE CAST(gploan.startdate AS DATE) < CAST(GETDATE() AS DATE)
+        AND gploan.latepaystatus = 0
+        AND gploan.loanstatus = 3;";
 
             IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);
             return result.ToList();
@@ -176,7 +183,7 @@ namespace TheNeqatcomApp.Infra.Repository
         FROM gploan
         INNER JOIN gploanee ON gploan.loaneeid = gploanee.loaneeid
         INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
-        WHERE DATEADD(DAY, -3, CAST(gploan.startdate AS DATE)) = CAST(GETDATE() AS DATE)
+        WHERE DATEADD(DAY, 3, CAST(gploan.startdate AS DATE)) = CAST(GETDATE() AS DATE)
         AND gploan.beforepaystatus = 0 AND gploan.loanstatus = 3";
 
             IEnumerable<LoaneeReminder> result = _dbContext.Connection.Query<LoaneeReminder>(query);

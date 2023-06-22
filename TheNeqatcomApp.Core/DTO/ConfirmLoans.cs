@@ -18,7 +18,6 @@ namespace TheNeqatcomApp.Core.DTO
         public decimal? Monthlyamount { get; set; }
         public decimal? Predayscounter { get; set; }
         public decimal? Latedayscounter { get; set; }
-        public DateTime? Startdate { get; set; }
         public DateTime? Enddate { get; set; }
         public decimal? Loaneeid { get; set; }
         public decimal? Loanstatus { get; set; }
@@ -46,7 +45,8 @@ namespace TheNeqatcomApp.Core.DTO
         public string Meetingurl { get; set; }
         public decimal? Feedbackk { get; set; }
         public string Meetingtime { get; set; }
-    
+        public DateTime? Startdate { get; set; }
+
         public string Categoryname { get; set; }
         public string Categoryimage { get; set; }
 

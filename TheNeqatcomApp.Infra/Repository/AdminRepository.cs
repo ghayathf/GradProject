@@ -52,7 +52,7 @@ namespace TheNeqatcomApp.Infra.Repository
         FROM gploan
         INNER JOIN gploanee ON gploan.loaneeid = gploanee.loaneeid
         INNER JOIN gpuser ON gploanee.LOANEEUSERID = gpuser.userid
-        INNER JOIN gpmeetings ON gpmeetings.loanid = gploan.loanid
+        LEFT JOIN gpmeetings ON gpmeetings.loanid = gploan.loanid
         WHERE DATEADD(DAY, 3, CAST(gpmeetings.startdate AS DATE)) <= CAST(GETDATE() AS DATE)
         AND (gploan.loanstatus = 1 OR gploan.loanstatus = 2)";
 
