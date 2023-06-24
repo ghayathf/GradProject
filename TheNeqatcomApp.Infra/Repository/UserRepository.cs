@@ -46,7 +46,7 @@ namespace TheNeqatcomApp.Infra.Repository
                 addr = user.Address,
                 R = user.Role,
                 Uname = user.Username,
-                img = string.IsNullOrEmpty(user.Userimage) ? "55100838-9016-4739-9d47-9108094e44d4_261-2617807_person-question-mark-png.png" : user.Userimage
+                img = string.IsNullOrEmpty(user.Userimage) ? "https://neqatcomstorage.blob.core.windows.net/images-container/80b8f1df-ad88-4b82-8f75-b5e15953281a_1876578-200.png" : user.Userimage
             };
 
             var result = _dbContext.Connection.Execute("INSERT INTO GPUser (firstname, lastname, email, password, phonenum, address, role, username, userimage) VALUES (@Fname, @Lname, @emaail, @pass, @phone, @addr, @R, @Uname, @img)",
