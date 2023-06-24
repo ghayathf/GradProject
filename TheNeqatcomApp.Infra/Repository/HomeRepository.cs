@@ -71,12 +71,6 @@ namespace TheNeqatcomApp.Infra.Repository
         }
 
 
-
-
-
-
-
-
         public void CreateHomeInformation(Gphomepage finalHomepage)
         {
             var p = new DynamicParameters();
@@ -210,7 +204,7 @@ UPDATE gploan
             var query = @"
         UPDATE gploan
         SET beforepaystatus = 1
-        WHERE DATEADD(DAY, -3, CAST(gploan.startdate AS DATE)) = CAST(GETDATE() AS DATE)
+        WHERE DATEADD(DAY, 3, CAST(gploan.startdate AS DATE)) = CAST(GETDATE() AS DATE)
         AND gploan.beforepaystatus = 0
         AND gploan.loanstatus = 3";
 
