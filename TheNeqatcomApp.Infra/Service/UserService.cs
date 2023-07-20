@@ -60,6 +60,7 @@ namespace TheNeqatcomApp.Infra.Service
                 if (result.Role == "Lender")
                 {
                     claims.Add(new Claim("Lenderid", result.lenderId.ToString()));
+                    claims.Add(new Claim("RegisterStatus", result.Registerstatus.ToString()));
                 }
                 else if (result.Role == "Loanee")
                 {

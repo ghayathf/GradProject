@@ -98,7 +98,7 @@ namespace TheNeqatcomApp.API.Controllers
             var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
             // Retrieve the connection string for your Azure Blob Storage
-            string storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=neqatcomstorage;AccountKey=CAx4ethtWMCMon9qcXk/ZetYTUtYyzhlWmAq+fj5sGXoUT5cihFTdH8eLKjQqCsDDdwWg7gB4D2B+ASt0oVPqQ==;EndpointSuffix=core.windows.net";
+            string storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=neqatcommstorage;AccountKey=HdBbD082WXtNYt8NnyHUoZD78zg6ZzRZPcowCwdYcTi97b/fh5PIHVWPZAsVaAYG8FQR2l5jI9Ud+AStKCYSPg==;EndpointSuffix=core.windows.net";
 
             // Create a CloudStorageAccount object using the connection string
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
@@ -150,12 +150,16 @@ namespace TheNeqatcomApp.API.Controllers
             using (var stream = file.OpenReadStream())
             {
                 await blockBlob.UploadFromStreamAsync(stream);
-            }
 
-            Gpuser item = new Gpuser();
-            item.Userimage = blockBlob.Uri.ToString(); // Store the image URL instead of the blob name
-            return item;
+                // Get the complete URL of the uploaded image
+                string imageUrl = blockBlob.Uri.ToString();
+
+                Gpuser item = new Gpuser();
+                item.Userimage = imageUrl; // Store the complete image URL
+                return item;
+            }
         }
+
 
 
     }

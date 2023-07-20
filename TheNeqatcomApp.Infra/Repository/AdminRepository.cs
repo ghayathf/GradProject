@@ -126,7 +126,7 @@ namespace TheNeqatcomApp.Infra.Repository
 
             return result.ToList();
         }
-
+        //retrieves complaints for loanee from lender or system
         public List<LenderComplaints> GetLenderStoresComplaints()
         {
             var sql = @"

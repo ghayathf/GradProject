@@ -19,6 +19,7 @@ namespace TheNeqatcomApp.Core.DTO
         public string Username { get; set; }
         public string Userimage { get; set; }
         public decimal? Creditscore { get; set; }
+        public decimal? Registerstatus { get; set; }
 
     }
 }

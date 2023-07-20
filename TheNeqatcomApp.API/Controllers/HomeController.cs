@@ -63,7 +63,7 @@ namespace TheNeqatcomApp.API.Controllers
             var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
             // Retrieve the connection string for your Azure Blob Storage
-            string storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=neqatcomstorage;AccountKey=CAx4ethtWMCMon9qcXk/ZetYTUtYyzhlWmAq+fj5sGXoUT5cihFTdH8eLKjQqCsDDdwWg7gB4D2B+ASt0oVPqQ==;EndpointSuffix=core.windows.net";
+            string storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=neqatcommstorage;AccountKey=HdBbD082WXtNYt8NnyHUoZD78zg6ZzRZPcowCwdYcTi97b/fh5PIHVWPZAsVaAYG8FQR2l5jI9Ud+AStKCYSPg==;EndpointSuffix=core.windows.net";
 
             // Create a CloudStorageAccount object using the connection string
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
@@ -118,9 +118,11 @@ namespace TheNeqatcomApp.API.Controllers
             }
 
             Gphomepage item = new Gphomepage();
-            item.Logo = fileName;
+            // Store the complete image URL in the Logo property
+            item.Logo = blockBlob.Uri.ToString();
             return item;
         }
+
         [HttpGet]
         [Route("getTableLengths")]
         public List<Lengths> getTableLengths()

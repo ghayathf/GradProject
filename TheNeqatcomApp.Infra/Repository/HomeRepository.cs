@@ -22,53 +22,56 @@ namespace TheNeqatcomApp.Infra.Repository
         public void CalculateCreditScores()
         {
             string query = @"
-        DECLARE @LoaneeId INT;
-        DECLARE @LateDaysSum INT;
-        DECLARE @LoanCount INT;
-        DECLARE @CreditScore DECIMAL(10, 2);
+    DECLARE @LoaneeId INT;
+    DECLARE @LateDaysSum INT;
+    DECLARE @LoanCount INT;
+    DECLARE @LateDaysAvg DECIMAL(10, 2);
+    DECLARE @CreditScore DECIMAL(10, 2);
 
-        DECLARE loaneeCursor CURSOR FOR
-        SELECT LoaneeId
-        FROM GPLoanee;
+    DECLARE loaneeCursor CURSOR FOR
+    SELECT LoaneeId
+    FROM GPLoanee;
 
-        OPEN loaneeCursor;
+    OPEN loaneeCursor;
 
-        FETCH NEXT FROM loaneeCursor INTO @LoaneeId;
+    FETCH NEXT FROM loaneeCursor INTO @LoaneeId;
 
-        WHILE @@FETCH_STATUS = 0
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SELECT @LateDaysSum = SUM(l.LateDaysCounter), @LoanCount = COUNT(*)
+        FROM GPLoan l
+        WHERE l.LoaneeId = @LoaneeId;
+
+        IF @LoanCount > 0
         BEGIN
-            SELECT @LateDaysSum = SUM(l.LateDaysCounter), @LoanCount = COUNT(*)
-            FROM GPLoan l
-            WHERE l.LoaneeId = @LoaneeId;
-
-            IF @LoanCount > 0
-            BEGIN
-                SELECT @CreditScore = CASE
-                    WHEN (10 - (gn.WarnCounter * 0.6) - (@LateDaysSum * 0.3) - (gn.PostponeCounter * 0.1)) > 10 THEN 10
-                    WHEN (10 - (gn.WarnCounter * 0.6) - (@LateDaysSum * 0.3) - (gn.PostponeCounter * 0.1)) < 1 THEN 1
-                    ELSE ROUND(10 - (gn.WarnCounter * 0.6) - (@LateDaysSum * 0.3) - (gn.PostponeCounter * 0.1), 2)
-                END
-                FROM GPLoanee gn
-                WHERE gn.LoaneeId = @LoaneeId;
+            SELECT @LateDaysAvg = @LateDaysSum / CAST(@LoanCount AS DECIMAL(10, 2));
+            SELECT @CreditScore = CASE
+                WHEN (10 - (gn.WarnCounter * 0.6) - (@LateDaysAvg * 0.3) - (gn.PostponeCounter * 0.1)) > 10 THEN 10
+                WHEN (10 - (gn.WarnCounter * 0.6) - (@LateDaysAvg * 0.3) - (gn.PostponeCounter * 0.1)) < 1 THEN 1
+                ELSE ROUND(10 - (gn.WarnCounter * 0.6) - (@LateDaysAvg * 0.3) - (gn.PostponeCounter * 0.1), 2)
             END
-            ELSE
-            BEGIN
-                SET @CreditScore = 10; -- Set a default value or adjust as needed
-            END
-
-            UPDATE GPLoanee
-            SET CreditScore = @CreditScore
-            WHERE LoaneeId = @LoaneeId;
-
-            FETCH NEXT FROM loaneeCursor INTO @LoaneeId;
+            FROM GPLoanee gn
+            WHERE gn.LoaneeId = @LoaneeId;
+        END
+        ELSE
+        BEGIN
+            SET @CreditScore = 10; -- Set a default value or adjust as needed
         END
 
-        CLOSE loaneeCursor;
-        DEALLOCATE loaneeCursor;
-    ";
+        UPDATE GPLoanee
+        SET CreditScore = @CreditScore
+        WHERE LoaneeId = @LoaneeId;
+
+        FETCH NEXT FROM loaneeCursor INTO @LoaneeId;
+    END
+
+    CLOSE loaneeCursor;
+    DEALLOCATE loaneeCursor;
+";
 
             _dbContext.Connection.Execute(query);
         }
+
 
 
         public void CreateHomeInformation(Gphomepage finalHomepage)

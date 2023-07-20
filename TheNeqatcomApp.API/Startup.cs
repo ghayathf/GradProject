@@ -47,7 +47,7 @@ namespace TheNeqatcomApp.API
             {
                 corsOptions.AddPolicy("CorsPolicy",
                builder =>
-               { builder.WithOrigins("http://localhost:4200", "https://neqatcomm.azurewebsites.net").AllowAnyHeader().AllowAnyMethod();
+               { builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                   
                });
